@@ -1,4 +1,4 @@
-package com.univice.cse364project;
+package com.univice.cse364project.employee;
 
 import java.util.Objects;
 

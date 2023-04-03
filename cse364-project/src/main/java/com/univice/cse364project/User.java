@@ -1,9 +1,5 @@
 package com.univice.cse364project;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,40 +7,50 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    private String userId;
-    private String name;
-    private Date creationDate = new Date();
-    private Map<String, String> userSettings = new HashMap<>();
+    private Long userId;
+    private String gender;
+    private int age;
+    private int occupation;
 
-    public String getUserId() {
+    private String zipcode;
+
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public String getGender() {
+        return gender;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getOccupation() {
+        return occupation;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAge(int age) {
+        this.age = age;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    public void setOccupation(int occupation) {
+        this.occupation = occupation;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Map<String, String> getUserSettings() {
-        return userSettings;
-    }
-
-    public void setUserSettings(Map<String, String> userSettings) {
-        this.userSettings = userSettings;
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
     }
 }

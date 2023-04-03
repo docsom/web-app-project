@@ -1,4 +1,4 @@
-package com.univice.cse364project;
+package com.univice.cse364project.employee;
 
 public class EmployeeNotFoundException extends RuntimeException {
     EmployeeNotFoundException(Long id) {

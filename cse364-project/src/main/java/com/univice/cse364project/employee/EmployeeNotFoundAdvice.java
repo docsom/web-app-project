@@ -1,4 +1,4 @@
-package com.univice.cse364project;
+package com.univice.cse364project.employee;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
