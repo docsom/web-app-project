@@ -1,13 +1,13 @@
 package com.univice.cse364project.user;
 
-import com.univice.cse364project.movie.Movie;
-import com.univice.cse364project.movie.MovieRepository;
-import com.univice.cse364project.user.User;
-import com.univice.cse364project.user.UserRepository;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -17,8 +17,9 @@ public class UserController {
 
     private final UserRepository UserRepository;
 
-    public UserController(UserRepository UserRepository) {
+    public UserController(UserRepository UserRepository) throws IOException, CsvException {
         this.UserRepository = UserRepository;
+        readDataFromCsv("cse364-project/data/users.csv");
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
@@ -36,5 +37,18 @@ public class UserController {
     public User addNewUsers(@RequestBody User user) {
         LOG.info("Saving user.");
         return UserRepository.save(user);
+    }
+    public void readDataFromCsv(String filePath) throws IOException, CsvException {
+        CSVReader reader = new CSVReader(new FileReader(filePath));
+        List<String[]> rows = reader.readAll();
+        for (String[] row : rows) {
+            User data = new User();
+            data.setUserId(Long.parseLong(row[0]));
+            data.setGender(row[1]);
+            data.setAge(Integer.parseInt(row[2]));
+            data.setOccupation(Integer.parseInt(row[3]));
+            data.setZipcode(row[4]);
+            UserRepository.save(data);
+        }
     }
 }

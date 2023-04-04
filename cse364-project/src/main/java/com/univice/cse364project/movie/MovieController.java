@@ -1,11 +1,15 @@
 package com.univice.cse364project.movie;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.rating.Rating;
 import com.univice.cse364project.rating.RatingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +22,16 @@ public class MovieController {
 
     private final RatingRepository ratingRepository;
 
-    public MovieController(MovieRepository movieRepository, RatingRepository ratingRepository) {
+    public MovieController(MovieRepository movieRepository, RatingRepository ratingRepository) throws IOException, CsvException {
         this.MovieRepository = movieRepository;
         this.ratingRepository = ratingRepository;
+//        MongoClient mongoClient = new MongoClient("localhost", 8080);
+//        DB database = mongoClient.getDB("user_db");
+//        if (!database.collectionExists("movie")) {
+//            readDataFromCsv("cse364-project/data/movies.csv");
+//        }
+        readDataFromCsv("cse364-project/data/movies.csv");
+
     }
     public  List<Rating> getRatings() {return ratingRepository.findAll();}
 
@@ -57,6 +68,17 @@ public class MovieController {
             }
         }
         return target;
+    }
+    public void readDataFromCsv(String filePath) throws IOException, CsvException {
+        CSVReader reader = new CSVReader(new FileReader(filePath));
+        List<String[]> rows = reader.readAll();
+        for (String[] row : rows) {
+            Movie data = new Movie();
+            data.setMovieId(Long.parseLong(row[0]));
+            data.setTitle(row[1]);
+            data.setGenre(row[2]);
+            MovieRepository.save(data);
+        }
     }
 
 }
