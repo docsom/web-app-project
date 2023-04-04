@@ -19,7 +19,7 @@ public class UserController {
 
     public UserController(UserRepository UserRepository) throws IOException, CsvException {
         this.UserRepository = UserRepository;
-        readDataFromCsv("cse364-project/data/users.csv");
+        readDataFromCsv("users.csv");
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
@@ -38,8 +38,9 @@ public class UserController {
         LOG.info("Saving user.");
         return UserRepository.save(user);
     }
-    public void readDataFromCsv(String filePath) throws IOException, CsvException {
-        CSVReader reader = new CSVReader(new FileReader(filePath));
+    public void readDataFromCsv(String fileName) throws IOException, CsvException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));
         List<String[]> rows = reader.readAll();
         for (String[] row : rows) {
             User data = new User();

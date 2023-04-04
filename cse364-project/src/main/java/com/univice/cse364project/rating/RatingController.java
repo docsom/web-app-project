@@ -19,7 +19,7 @@ public class RatingController {
 
     public RatingController(RatingRepository ratingRepository) throws IOException, CsvException {
         this.ratingRepository = ratingRepository;
-//        readDataFromCsv("cse364-project/data/ratings.csv");
+        readDataFromCsv("ratings.csv");
     }
 
     @RequestMapping(value = "/ratings", method = RequestMethod.GET)
@@ -30,8 +30,9 @@ public class RatingController {
     public Rating addNewRating(@RequestBody Rating rating){
         return ratingRepository.save(rating);
     }
-    public void readDataFromCsv(String filePath) throws IOException, CsvException {
-        CSVReader reader = new CSVReader(new FileReader(filePath));
+    public void readDataFromCsv(String fileName) throws IOException, CsvException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));
         List<String[]> rows = reader.readAll();
         for (String[] row : rows) {
             Rating data = new Rating();
