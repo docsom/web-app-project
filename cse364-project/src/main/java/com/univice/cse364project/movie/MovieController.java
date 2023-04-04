@@ -57,7 +57,10 @@ public class MovieController {
                     counter++;
                 }
             }
-            double avg = sum/counter;
+            double avg = 0;
+            if (counter != 0) {
+                avg = sum/counter;
+            }
             if(avg >= ratingValue){
                 target.add(m);
             }
