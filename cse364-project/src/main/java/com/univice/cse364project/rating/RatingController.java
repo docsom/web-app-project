@@ -33,13 +33,13 @@ public class RatingController {
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
         CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));
-        List<String[]> rows = reader.readAll();
-        for (String[] row : rows) {
+        String [] nextLine;
+        while ((nextLine = reader.readNext()) != null) {
             Rating data = new Rating();
-            data.setUserId(Long.parseLong(row[0]));
-            data.setMovieId(Long.parseLong(row[1]));
-            data.setRatingValue(Integer.parseInt(row[2]));
-            data.setTimeStamp(row[3]);
+            data.setUserId(Long.parseLong(nextLine[0]));
+            data.setMovieId(Long.parseLong(nextLine[1]));
+            data.setRatingValue(Integer.parseInt(nextLine[2]));
+            data.setTimeStamp(nextLine[3]);
             ratingRepository.save(data);
         }
     }
