@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y openssh-server
 RUN apt-get install -y vim git openjdk-17-jdk maven
 RUN apt-get install -y sudo
 RUN apt-get install -y systemctl
+RUN apt-get install -y curl
 
 WORKDIR /root/project
 
