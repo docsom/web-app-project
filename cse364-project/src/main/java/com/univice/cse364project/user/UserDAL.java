@@ -8,7 +8,9 @@ import java.util.List;
 public interface UserDAL {
     List<User> getAllUsers();
 
-    User getUserById(String userId);
+    User getUserById(Long userId);
 
     User addNewUser(User user);
+
+    User editUser(User newUser, Long id);
 }

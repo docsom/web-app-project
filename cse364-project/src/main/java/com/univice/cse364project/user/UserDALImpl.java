@@ -2,7 +2,6 @@ package com.univice.cse364project.user;
 
 import java.util.List;
 
-import com.univice.cse364project.movie.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,7 +21,7 @@ public class UserDALImpl implements UserDAL {
 
 
     @Override
-    public User getUserById(String userId) {
+    public User getUserById(Long userId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("userId").is(userId));
         return mongoTemplate.findOne(query, User.class);
@@ -33,6 +32,21 @@ public class UserDALImpl implements UserDAL {
         mongoTemplate.save(user);
         // Now, user object will contain the ID as well
         return user;
+    }
+
+    @Override
+    public User editUser(User newUser, Long id){
+        User u = mongoTemplate.findById(id, User.class);
+        if(u != null){
+            u.setAge(newUser.getAge());
+            u.setOccupation(newUser.getOccupation());
+            u.setGender(newUser.getGender());
+            u.setZipcode(newUser.getZipcode());
+            return mongoTemplate.save(u);
+        }else{
+            newUser.setUserId(id);
+            return mongoTemplate.save(newUser);
+        }
     }
 
 

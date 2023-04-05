@@ -42,6 +42,24 @@ public class UserController {
         LOG.info("Saving user.");
         return UserRepository.save(user);
     }
+
+    @PutMapping("user/{id}")
+    public User editUser(@RequestBody User newUser, @PathVariable Long id){
+
+        return UserRepository.findById(id)
+                .map(user -> {
+                    user.setAge(newUser.getAge());
+                    user.setGender(newUser.getGender());
+                    user.setOccupation(newUser.getOccupation());
+                    user.setZipcode(newUser.getZipcode());
+                    return UserRepository.save(user);
+                })
+                .orElseGet(()->{
+                    newUser.setUserId(id);
+                    return UserRepository.save(newUser);
+                });
+    }
+
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
         CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));

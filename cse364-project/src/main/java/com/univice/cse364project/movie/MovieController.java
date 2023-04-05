@@ -45,12 +45,17 @@ public class MovieController {
         return MovieRepository.save(movie);
     }
 
+    @RequestMapping(value = "/movie/{movieId}", method = RequestMethod.GET)
+    public Movie getMovie(@PathVariable Long movieId) {
+        LOG.info("Getting movie with ID: {}.", movieId);
+        return MovieRepository.findById(movieId).orElse(null);
+    }
+
     @PutMapping("/movie/{id}")
      public Movie editMovie(@RequestBody Movie newMovie, @PathVariable Long id) {
 
         return MovieRepository.findById(id)
                 .map(movie -> {
-                    movie.setMovieId(newMovie.getMovieId());
                     movie.setGenre(newMovie.getGenre());
                     movie.setTitle(newMovie.getTitle());
                     return MovieRepository.save(movie);
