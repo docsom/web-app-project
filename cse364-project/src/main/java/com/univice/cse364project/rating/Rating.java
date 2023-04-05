@@ -1,12 +1,14 @@
 package com.univice.cse364project.rating;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "rating")
 public class Rating {
     @Id
+    @JsonIgnore
     private String id;
 
     private Long userId;
