@@ -8,6 +8,12 @@ run the following commands:
 Inside the docker container, you can run:  
 **root@containerID$ sh run.sh**
 
+In run.sh, it notices as follows:    
+**After this operation, 5837 kB of additional disk space will be used.**  
+**Do you want to continue? [Y/n] then, you just enter y** and  
+after this sentence, mongo want to know our space.  
+**You should enter "6" and "69".**
+
 The container will execute a bash shell by default when the built image is launched.  
 It takes **10 minutes** in our local machine. Please wait for building completely.
 
@@ -49,6 +55,7 @@ The expected output of it will be
 ### 2. Movies
 1. GET  
 A GET request is supposed to get the list of movies rated whose average ratings are greater than or equal to the given rating in JSON format.  
+It takes about **5 minutes** in our local machine. Please wait for getting the output.  
 Examples of curl command for GET requests are as follows:  
 - curl -X GET http://localhost:8080/ratings/4  
 The expected output of it will be  
@@ -70,14 +77,14 @@ The expected output of it will be
 2. POST  
 A POST request is suppose to create a new record in the database.  
 An example of curl command for POST requests is as follows:  
-- curl -X POST http://localhost:8080/movie/create -H "Content-type:application/json" -d '{"movieId": "3953", "title": "Avatar 2 (2022)", "genre": "Sci-Fi"}'  
+- curl -X POST http://localhost:8080/movie/create -H "Content-type:application/json" -d '{"movieId": 3953, "title": "Avatar 2 (2022)", "genre": "Sci-Fi"}'  
 You can create a new record in JSON format. 
 The expected output of it will be  
 **{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi"}**
 3. PUT  
 A PUT request is suppose to update an existing record in the database.  
 An example of curl command for PUT requests is as follows:  
-- curl -X PUT http://localhost:8080/movie/3953 -H "Content-type:application/json" -d '{"movieId": "3953", "titles": "Avatar 2 (2022)", "genre": "Sci-Fi|Action"}'  
+- curl -X PUT http://localhost:8080/movie/3953 -H "Content-type:application/json" -d '{"movieId": 3953, "titles": "Avatar 2 (2022)", "genre": "Sci-Fi|Action"}'  
 You can update an existing record of the movie whose id is 3953 in JSON format.  
 The expected output of it will be  
 **{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi|Action"}**
