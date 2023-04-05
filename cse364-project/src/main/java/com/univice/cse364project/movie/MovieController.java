@@ -1,5 +1,6 @@
 package com.univice.cse364project.movie;
 
+import com.google.gson.JsonObject;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.rating.Rating;
@@ -62,9 +63,9 @@ public class MovieController {
 
     @RequestMapping(value = "/ratings/{ratingValue}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<Movie>> getOverRatingMovies (@PathVariable int ratingValue){
+    public ResponseEntity<List<JsonObject>> getOverRatingMovies (@PathVariable int ratingValue){
         List<Movie> total = getAllMovies();
-        List<Movie> target = new ArrayList<>();
+        List<JsonObject> target = new ArrayList<>();
         List<Rating> ratings = getRatings();
 
         if(ratingValue < 1 || ratingValue > 5){
@@ -88,7 +89,10 @@ public class MovieController {
                     avg = sum2/counter;
                 }
                 if(avg >= ratingValue){
-                    target.add(m);
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("title", m.getTitle());
+                    obj.addProperty("genre", m.getGenre());
+                    target.add(obj);
                 }
             }
             return new ResponseEntity<>(target, HttpStatus.OK);
