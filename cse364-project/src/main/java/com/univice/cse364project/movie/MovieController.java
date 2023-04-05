@@ -2,11 +2,12 @@ package com.univice.cse364project.movie;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import com.univice.cse364project.employee.Employee;
 import com.univice.cse364project.rating.Rating;
 import com.univice.cse364project.rating.RatingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileReader;
@@ -57,33 +58,38 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/ratings/{ratingValue}", method = RequestMethod.GET)
-    public List<Movie> getOverRatingMovies(@PathVariable int ratingValue){
+    @ResponseBody
+    public ResponseEntity<List<Movie>> getOverRatingMovies (@PathVariable int ratingValue){
         List<Movie> total = getAllMovies();
         List<Movie> target = new ArrayList<>();
         List<Rating> ratings = getRatings();
 
-        for(int i = 0; i < total.size(); i++ ){
-            Movie m = total.get(i);
-            long movieId = m.getMovieId();
-            int sum = 0;
-            int counter = 0;
-            for(int j = 0; j < ratings.size(); j++ ){
-                Rating r = ratings.get(j);
-                if(movieId == r.getMovieId()){
-                    sum += r.getRatingValue();
-                    counter++;
+        if(ratingValue < 1 || ratingValue > 5){
+            throw new RatingInvalidException();
+        }else{
+            for(int i = 0; i < total.size(); i++ ){
+                Movie m = total.get(i);
+                long movieId = m.getMovieId();
+                int sum = 0;
+                int counter = 0;
+                for(int j = 0; j < ratings.size(); j++ ){
+                    Rating r = ratings.get(j);
+                    if(movieId == r.getMovieId()){
+                        sum += r.getRatingValue();
+                        counter++;
+                    }
+                }
+                double avg = 0;
+                double sum2 = sum;
+                if (counter != 0) {
+                    avg = sum2/counter;
+                }
+                if(avg >= ratingValue){
+                    target.add(m);
                 }
             }
-            double avg = 0;
-            double sum2 = sum;
-            if (counter != 0) {
-                avg = sum2/counter;
-            }
-            if(avg >= ratingValue){
-                target.add(m);
-            }
+            return new ResponseEntity<>(target, HttpStatus.OK);
         }
-        return target;
     }
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
@@ -98,4 +104,8 @@ public class MovieController {
         }
     }
 
+    @ExceptionHandler(RatingInvalidException.class)
+    public MovieError RatingInvalidExHandle(RatingInvalidException e){
+        return new MovieError("Value of the rating is invalid.");
+    }
 }
