@@ -41,8 +41,6 @@ public class MovieController {
     }
     @RequestMapping(value = "/movie/create", method = RequestMethod.POST)
     public Movie addNewMovie(@RequestBody Movie movie){
-        Long len = MovieRepository.count();
-        movie.setMovieId(len + 1);
         return MovieRepository.save(movie);
     }
 

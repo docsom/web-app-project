@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "movie")
 public class Movie {
     @Id
-    @JsonIgnore
     private Long movieId;
     private String title;
     private String genre;
