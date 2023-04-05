@@ -8,10 +8,7 @@ run the following commands:
 Inside the docker container, you can run:  
 **root@containerID$ sh run.sh**
 
-In run.sh, it notices as follows:    
-**After this operation, 5837 kB of additional disk space will be used.**  
-**Do you want to continue? [Y/n] then, you just enter y** and  
-after this sentence, mongo want to know our space.  
+In run.sh, MongoDB wants to know our space.  
 **You should enter "6" and "69".**
 
 The container will execute a bash shell by default when the built image is launched.  
