@@ -27,8 +27,11 @@ public class MovieController {
     public MovieController(MovieRepository movieRepository, RatingRepository ratingRepository) throws IOException, CsvException {
         this.MovieRepository = movieRepository;
         this.ratingRepository = ratingRepository;
-        //readDataFromCsv("movies.csv");
-
+        long size = movieRepository.count();
+        if(size == 0){
+            LOG.info("Loading movies");
+            readDataFromCsv("movies.csv");
+        }
     }
     public  List<Rating> getRatings() {return ratingRepository.findAll();}
 

@@ -19,7 +19,11 @@ public class RatingController {
 
     public RatingController(RatingRepository ratingRepository) throws IOException, CsvException {
         this.ratingRepository = ratingRepository;
-        //readDataFromCsv("ratings.csv");
+        long size = ratingRepository.count();
+        if(size == 0){
+            LOG.info("Loading ratings");
+            readDataFromCsv("ratings.csv");
+        }
     }
 
     @RequestMapping(value = "/ratings", method = RequestMethod.GET)

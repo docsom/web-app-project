@@ -19,7 +19,11 @@ public class UserController {
 
     public UserController(UserRepository UserRepository) throws IOException, CsvException {
         this.UserRepository = UserRepository;
-        //readDataFromCsv("users.csv");
+        long size = UserRepository.count();
+        if(size == 0){
+            LOG.info("Loading users");
+            readDataFromCsv("users.csv");
+        }
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
