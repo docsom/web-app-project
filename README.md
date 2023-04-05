@@ -70,6 +70,12 @@ The expected output of it will be
 You can get an error message if you request with the given rating which is not 1, 2, 3, 4, or 5.  
 The expected output of it will be  
 **{"message":"Value of the rating is invalid."}**
+- curl -X GET http://localhost:8080/movie/3  
+You can get a record of movie whose movieId is 3 in JSON format. The expected output of it will be  
+**{"movieId":3,"title":"Grumpier Old Men (1995)","genre":"Comedy|Romance"}**
+- curl -X GET http://localhost:8080/user/1  
+You can get a record of user whose userId is 1 in JSON format. The expected output of it will be  
+**{"userId":1,"gender":"F","age":1,"occupation":10,"zipcode":"48067"}**
 
 2. POST  
 A POST request is suppose to create a new record in the database.  
