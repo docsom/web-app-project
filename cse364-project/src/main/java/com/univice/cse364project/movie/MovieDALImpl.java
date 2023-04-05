@@ -18,6 +18,20 @@ public class MovieDALImpl implements MovieDAL {
     public List<Movie> getAllMovies() { return mongoTemplate.findAll(Movie.class);}
 
     @Override
+    public Movie editNewMovie(Movie newMovie, Long id){
+        Movie m = mongoTemplate.findById(id, Movie.class);
+        if( m != null){
+            m.setMovieId(newMovie.getMovieId());
+            m.setTitle(newMovie.getTitle());
+            m.setGenre(newMovie.getGenre());
+            return mongoTemplate.save(m);
+        }else{
+            newMovie.setMovieId(id);
+            return mongoTemplate.save(newMovie);
+        }
+    }
+
+    @Override
     public Movie addNewMovie(Movie movie){
         mongoTemplate.save(movie);
 

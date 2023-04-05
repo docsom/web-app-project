@@ -2,6 +2,7 @@ package com.univice.cse364project.movie;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.univice.cse364project.employee.Employee;
 import com.univice.cse364project.rating.Rating;
 import com.univice.cse364project.rating.RatingRepository;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class MovieController {
     public MovieController(MovieRepository movieRepository, RatingRepository ratingRepository) throws IOException, CsvException {
         this.MovieRepository = movieRepository;
         this.ratingRepository = ratingRepository;
-        readDataFromCsv("movies.csv");
+        //readDataFromCsv("movies.csv");
 
     }
     public  List<Rating> getRatings() {return ratingRepository.findAll();}
@@ -37,6 +38,22 @@ public class MovieController {
     @RequestMapping(value = "/movie/create", method = RequestMethod.POST)
     public Movie addNewMovie(@RequestBody Movie movie){
         return MovieRepository.save(movie);
+    }
+
+    @PutMapping("/movie/{id}")
+     public Movie editMovie(@RequestBody Movie newMovie, @PathVariable Long id) {
+
+        return MovieRepository.findById(id)
+                .map(movie -> {
+                    movie.setMovieId(newMovie.getMovieId());
+                    movie.setGenre(newMovie.getGenre());
+                    movie.setTitle(newMovie.getTitle());
+                    return MovieRepository.save(movie);
+                })
+                .orElseGet(() -> {
+                    newMovie.setMovieId(id);
+                    return MovieRepository.save(newMovie);
+                });
     }
 
     @RequestMapping(value = "/ratings/{ratingValue}", method = RequestMethod.GET)

@@ -11,5 +11,7 @@ public interface MovieDAL {
 
     List<Movie> getAllMovies();
 
+    Movie editNewMovie(Movie newMovie, Long id);
+
     Movie addNewMovie(Movie movie);
 }
