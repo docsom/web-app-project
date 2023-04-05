@@ -12,7 +12,7 @@ The container will execute a bash shell by default when the built image is launc
 It takes **10 minutes** in our local machine. Please wait for building completely.
 
 ## REST APIs
-In another terminal, you can run curl commands that request GET, PUT, and POST methods.  
+In another terminal of the docker container, you can run curl commands that request GET, PUT, and POST methods.  
 In the database, there are records about employees and movies.  
 ### 1. Employees
 1. GET  
@@ -67,18 +67,17 @@ You can get an error message if you request with the given rating which is not 1
 The expected output of it will be  
 **{"message":"Value of the rating is invalid."}**
 
-2번 3번 수정중
 2. POST  
 A POST request is suppose to create a new record in the database.  
 An example of curl command for POST requests is as follows:  
-- curl -X POST http://localhost:8080/movies -H "Content-type:application/json" -d '{"title": "Avatar 2 (2022)", "genre": "Sci-Fi"}'  
-You can create a new record in JSON format. The movie id of it will be assigned automatically.  
+- curl -X POST http://localhost:8080/movie/create -H "Content-type:application/json" -d '{"movieId": "3953", "title": "Avatar 2 (2022)", "genre": "Sci-Fi"}'  
+You can create a new record in JSON format. 
 The expected output of it will be  
-**{"id":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi"}**
+**{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi"}**
 3. PUT  
 A PUT request is suppose to update an existing record in the database.  
 An example of curl command for PUT requests is as follows:  
-- curl -X PUT http://localhost:8080/employees/3 -H "Content-type:application/json" -d '{"name": "Samwise Gamgee", "role": "ring bearer"}'  
-You can update an existing record of the employee whose id is 3 in JSON format.  
+- curl -X PUT http://localhost:8080/movie/3953 -H "Content-type:application/json" -d '{"movieId": "3953", "titles": "Avatar 2 (2022)", "genre": "Sci-Fi|Action"}'  
+You can update an existing record of the movie whose id is 3953 in JSON format.  
 The expected output of it will be  
-**{"id":3,"name":"Samwise Gamgee","role":"ring bearer"}**
+**{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi|Action"}**
