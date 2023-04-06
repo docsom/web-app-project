@@ -17,7 +17,7 @@ It takes **10 minutes** in our local machine. Please wait for building completel
 ## REST APIs
 In another terminal of the docker container, you can run curl commands that request GET, PUT, and POST methods.  
 In the database, there are records about employees and movies.  
-### STEP2
+### STEP 2
 1. GET  
 A GET request is supposed to get the list of employees stored in the database.  
 Examples of curl command for GET requests are as follows:  
@@ -49,7 +49,7 @@ You can update an existing record of the employee whose id is 3 in JSON format.
 The expected output of it will be  
 **{"id":3,"name":"Samwise Gamgee","role":"ring bearer"}**
 
-### STEP3
+### STEP 3
 1. GET  
 A GET request is supposed to get the list of movies rated whose average ratings are greater than or equal to the given rating in JSON format.  
 It takes about **5 minutes** in our local machine. Please wait for getting the output.  
