@@ -17,7 +17,7 @@ It takes **10 minutes** in our local machine. Please wait for building completel
 ## REST APIs
 In another terminal of the docker container, you can run curl commands that request GET, PUT, and POST methods.  
 In the database, there are records about employees and movies.  
-### 1. Employees
+### STEP2
 1. GET  
 A GET request is supposed to get the list of employees stored in the database.  
 Examples of curl command for GET requests are as follows:  
@@ -49,7 +49,7 @@ You can update an existing record of the employee whose id is 3 in JSON format.
 The expected output of it will be  
 **{"id":3,"name":"Samwise Gamgee","role":"ring bearer"}**
 
-### 2. Movies
+### STEP3
 1. GET  
 A GET request is supposed to get the list of movies rated whose average ratings are greater than or equal to the given rating in JSON format.  
 It takes about **5 minutes** in our local machine. Please wait for getting the output.  
@@ -84,6 +84,10 @@ An example of curl command for POST requests is as follows:
 You can create a new record in JSON format. 
 The expected output of it will be  
 **{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi"}**
+- curl -X POST http://localhost:8080/movie/create -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
+You can create a new record in JSON format. 
+The expected output of it will be  
+**{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }**
 3. PUT  
 A PUT request is suppose to update an existing record in the database.  
 An example of curl command for PUT requests is as follows:  
@@ -91,3 +95,7 @@ An example of curl command for PUT requests is as follows:
 You can update an existing record of the movie whose id is 3953 in JSON format.  
 The expected output of it will be  
 **{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi|Action"}**
+- curl -X PUT http://localhost:8080/movie/3935 -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
+You can update an existing record of the user whose id is 3935 in JSON format. 
+The expected output of it will be  
+**{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }**
