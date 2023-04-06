@@ -70,9 +70,11 @@ The expected output of it will be
 You can get an error message if you request with the given rating which is not 1, 2, 3, 4, or 5.  
 The expected output of it will be  
 **{"message":"Value of the rating is invalid."}**
+
 - curl -X GET http://localhost:8080/movie/3  
 You can get a record of movie whose movieId is 3 in JSON format. The expected output of it will be  
 **{"movieId":3,"title":"Grumpier Old Men (1995)","genre":"Comedy|Romance"}**
+
 - curl -X GET http://localhost:8080/user/1  
 You can get a record of user whose userId is 1 in JSON format. The expected output of it will be  
 **{"userId":1,"gender":"F","age":1,"occupation":10,"zipcode":"48067"}**
@@ -84,18 +86,22 @@ An example of curl command for POST requests is as follows:
 You can create a new record in JSON format. 
 The expected output of it will be  
 **{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi"}**
-- curl -X POST http://localhost:8080/movie/create -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
+
+- curl -X POST http://localhost:8080/user/create -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
 You can create a new record in JSON format. 
 The expected output of it will be  
 **{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }**
+
 3. PUT  
 A PUT request is suppose to update an existing record in the database.  
-An example of curl command for PUT requests is as follows:  
+An example of curl command for PUT requests is as follows: 
+
 - curl -X PUT http://localhost:8080/movie/3953 -H "Content-type:application/json" -d '{"movieId": 3953, "titles": "Avatar 2 (2022)", "genre": "Sci-Fi|Action"}'  
 You can update an existing record of the movie whose id is 3953 in JSON format.  
 The expected output of it will be  
 **{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi|Action"}**
-- curl -X PUT http://localhost:8080/movie/3935 -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
+
+- curl -X PUT http://localhost:8080/user/3935 -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
 You can update an existing record of the user whose id is 3935 in JSON format. 
 The expected output of it will be  
 **{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }**
