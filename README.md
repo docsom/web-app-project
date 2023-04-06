@@ -51,10 +51,10 @@ The expected output of it will be
 
 ### STEP 3
 1. GET  
-A GET request is supposed to get the list of movies rated whose average ratings are greater than or equal to the given rating in JSON format.  
-It takes about **5 minutes** in our local machine. Please wait for getting the output.  
+A GET request is supposed to get the list of movies rated whose average ratings are greater than or equal to the given rating in JSON format.    
 Examples of curl command for GET requests are as follows:  
 - curl -X GET http://localhost:8080/ratings/4  
+It takes about **5 minutes** in our local machine. Please wait for getting the output.
 The expected output of it will be  
 **{  
   “title” : “Toy Story (1995)”,  
