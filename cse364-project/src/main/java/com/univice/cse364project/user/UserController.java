@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/")
-class UserController {
+public class UserController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
 

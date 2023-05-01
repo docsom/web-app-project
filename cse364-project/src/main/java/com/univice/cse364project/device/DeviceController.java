@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/")
-class DeviceController {
+public class DeviceController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final DeviceRepository deviceRepository;
 

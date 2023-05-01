@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(value="/")
-class InquiryController {
+public class InquiryController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final InquiryRepository inquiryRepository;
 
