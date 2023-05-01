@@ -18,4 +18,68 @@ public class User {
     private List<String> waitingType;
     private Device currentUsingDevice;
     private List<Inquiry> writtenInquiries;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public List<String> getWaitingType() {
+        return waitingType;
+    }
+
+    public void setWaitingType(List<String> waitingType) {
+        this.waitingType = waitingType;
+    }
+
+    public Device getCurrentUsingDevice() {
+        return currentUsingDevice;
+    }
+
+    public void setCurrentUsingDevice(Device currentUsingDevice) {
+        this.currentUsingDevice = currentUsingDevice;
+    }
+
+    public List<Inquiry> getWrittenInquiries() {
+        return writtenInquiries;
+    }
+
+    public void setWrittenInquiries(List<Inquiry> writtenInquiries) {
+        this.writtenInquiries = writtenInquiries;
+    }
 }
