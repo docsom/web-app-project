@@ -10,6 +10,7 @@ import java.util.List;
 @Document(collection = "user")
 public class User {
     @Id
+    private String authenticationId;
     private String id;
     private String password;
     private String email;
