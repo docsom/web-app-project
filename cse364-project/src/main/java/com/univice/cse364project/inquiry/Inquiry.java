@@ -10,7 +10,7 @@ public class Inquiry {
     private String id;
     private String title;
     private String contents;
-    private User writer;
+    private String writer;
     private boolean isConfirmed;
 
     public String getId() {
@@ -37,11 +37,11 @@ public class Inquiry {
         this.contents = contents;
     }
 
-    public User getWriter() {
+    public String getWriter() {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void setWriter(String writer) {
         this.writer = writer;
     }
 
