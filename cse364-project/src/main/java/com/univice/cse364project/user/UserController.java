@@ -19,10 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.FileReader;
 import java.io.IOException;
 
-class UserAndIDNum {
-    User user;
-    String id;
-}
 @RestController
 @RequestMapping(value = "/")
 public class UserController {
