@@ -1,5 +1,9 @@
 package com.univice.cse364project.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.internal.connection.tlschannel.WouldBlockException;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.dormResident.DormResident;
@@ -15,6 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import java.io.FileReader;
 import java.io.IOException;
 
+class UserAndIDNum {
+    User user;
+    String id;
+}
 @RestController
 @RequestMapping(value = "/")
 public class UserController {
@@ -50,8 +58,33 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String LoginUser(@RequestBody ObjectNode saveObj) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        String id = saveObj.get("id").asText();
+        String password = saveObj.get("password").asText();
+
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("id").is(id));
+        User existingUser = mongoTemplate.findOne(query1, User.class);
+
+        if(existingUser == null){
+            throw new NoUserException();
+        } else {
+            if(existingUser.getPassword().equals(password)){
+                return existingUser.getAuthenticationId();
+            } else {
+                throw new WrongPasswordException();
+            }
+        }
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public User registerNewUser(@RequestBody User user){
+    public User registerNewUser(@RequestBody ObjectNode saveObj) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        User user = mapper.treeToValue(saveObj.get("user"), User.class);
+        String idNum = saveObj.get("idNum").asText();
 
         Query query1 = new Query();
         query1.addCriteria(Criteria.where("id").is(user.getId()));
@@ -62,24 +95,24 @@ public class UserController {
         DormResident existingResident = mongoTemplate.findOne(query2, DormResident.class);
 
         Query query3 = new Query();
-        query3.addCriteria(Criteria.where("studentId").is(existingResident.getStudentNumber()));
+        query3.addCriteria(Criteria.where("studentId").is(user.getStudentId()));
         User existingUserExistingStudentId = mongoTemplate.findOne(query3, User.class);
 
 
         if(existingUser != null){
             //해당 id가 이미 사용중인 경우
-            System.out.println(existingUser);
             throw new ExistingIdException();
         }
         else if(existingResident == null) {
             //기숙사 거주자 학번이 아닌 경우
-            System.out.println(existingResident);
             throw new InvalidStudentIdException();
         }
         else if( existingUserExistingStudentId != null ){
             //해당 학번으로 만든 계정이 있는 경우
-            System.out.println(existingUserExistingStudentId);
             throw new ExistingStudentIdException();
+        } else if(existingResident != null && existingResident.getIdNumber() != idNum){
+            //주민등록번호가 학번과 일치하지 않는 경우
+            throw new UnmatchedIdNumberException();
         } else {
             mongoTemplate.save(user);
             return userRepository.save(user);
@@ -97,7 +130,22 @@ public class UserController {
     }
 
     @ExceptionHandler(InvalidStudentIdException.class)
-    public UserError ExistingStudentIdExceptionHandler(InvalidStudentIdException e){
+    public UserError InvalidStudentIdExceptionHandler(InvalidStudentIdException e){
         return new UserError("Given student id is invalid.");
+    }
+
+    @ExceptionHandler(UnmatchedIdNumberException.class)
+    public UserError UnmatchedIdNumberExceptionHandler(UnmatchedIdNumberException e){
+        return new UserError("Given Id number is not matched.");
+    }
+
+    @ExceptionHandler(NoUserException.class)
+    public UserError NoUserExceptionHandler(NoUserException e){
+        return new UserError("There is no user using given id.");
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public UserError WrongPasswordExceptionHandler(WrongPasswordException e){
+        return new UserError("Password is wrong.");
     }
 }

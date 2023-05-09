@@ -52,6 +52,14 @@ public class User {
         this.studentId = studentId;
     }
 
+    public String getAuthenticationId() {
+        return authenticationId;
+    }
+
+    public void setAuthenticationId(String authenticationId) {
+        this.authenticationId = authenticationId;
+    }
+
     public boolean isAdmin() {
         return isAdmin;
     }
