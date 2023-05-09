@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -72,15 +69,35 @@ public class UserController {
         if(existingUser != null){
             //해당 id가 이미 사용중인 경우
             System.out.println(existingUser);
+            throw new ExistingIdException();
         }
         else if(existingResident == null) {
             //기숙사 거주자 학번이 아닌 경우
             System.out.println(existingResident);
+            throw new InvalidStudentIdException();
         }
         else if( existingUserExistingStudentId != null ){
             //해당 학번으로 만든 계정이 있는 경우
             System.out.println(existingUserExistingStudentId);
+            throw new ExistingStudentIdException();
+        } else {
+            mongoTemplate.save(user);
+            return userRepository.save(user);
         }
-        return user;
+    }
+
+    @ExceptionHandler(ExistingIdException.class)
+    public UserError ExistingIdExceptionHandler(ExistingIdException e){
+        return new UserError("Given id is already used.");
+    }
+
+    @ExceptionHandler(ExistingStudentIdException.class)
+    public UserError ExistingStudentIdExceptionHandler(ExistingStudentIdException e){
+        return new UserError("Given student id is already used.");
+    }
+
+    @ExceptionHandler(InvalidStudentIdException.class)
+    public UserError ExistingStudentIdExceptionHandler(InvalidStudentIdException e){
+        return new UserError("Given student id is invalid.");
     }
 }
