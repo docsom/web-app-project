@@ -14,7 +14,7 @@ public class Device {
     private String type;
     private LocalDate startDate;
     private LocalDate endDate;
-    private User currentUser;
+    private String currentUser;
 
     public String getId() {
         return id;
@@ -56,11 +56,11 @@ public class Device {
         this.endDate = endDate;
     }
 
-    public User getCurrentUser() {
+    public String getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
     }
 }

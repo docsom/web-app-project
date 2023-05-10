@@ -1,11 +1,16 @@
 package com.univice.cse364project.device;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.user.User;
 import com.univice.cse364project.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileReader;
@@ -22,6 +27,8 @@ public class DeviceController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final DeviceRepository deviceRepository;
     private final UserRepository userRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public DeviceController(DeviceRepository deviceRepository, UserRepository userRepository) throws IOException, CsvException {
         this.deviceRepository = deviceRepository;
@@ -34,7 +41,22 @@ public class DeviceController {
     }
     @RequestMapping(value="/devices", method = RequestMethod.GET)
     public List<Device> getAllDevices() {
-        return deviceRepository.findAll();
+        List<Device> total = deviceRepository.findAll();
+        for (Device d : total) { // 목록을 가져올 때마다 날짜 지난 기기 체크
+            if(d.getEndDate()==null) continue;
+            if (d.getEndDate().isBefore(LocalDate.now())){
+                Query query1 = new Query();
+                query1.addCriteria(Criteria.where("id").is(d.getCurrentUser()));
+                User currentUser = mongoTemplate.findOne(query1, User.class);
+                currentUser.setCurrentUsingDevice(null);
+                userRepository.save(currentUser);
+                d.setStartDate(null);
+                d.setEndDate(null);
+                d.setCurrentUser(null);
+                deviceRepository.save(d);
+            }
+        }
+        return total;
     }
     @RequestMapping(value = "/devices/{type}", method = RequestMethod.GET)
     public List<Device> getAllTypeDevices(@PathVariable String type) {
@@ -48,18 +70,33 @@ public class DeviceController {
         return target;
     }
     @PutMapping(value="/device/{id}")
-    public Device rentDevice(@RequestParam String user, @PathVariable String id) {
-        User u = userRepository.findById(user).orElse(null);
-        return deviceRepository.findById(id)
-                .map(device -> {
-                    device.setStartDate(LocalDate.now());
-                    device.setEndDate(LocalDate.now().plusMonths(3));
-                    device.setCurrentUser(u);
-                    return deviceRepository.save(device);
-                })
-                .orElseGet(() -> {
-                    return null;
-                });
+    public Device rentDevice(@RequestBody ObjectNode saveObj, @PathVariable String id) {
+        String authId = saveObj.get("authenticationId").asText();
+        User u = userRepository.findById(authId).orElse(null);
+        if(u==null) {
+            // 로그인 여부 확인
+            throw new WrongAuthenticationIdException();
+        }
+        if(u.getCurrentUsingDevice()!=null){
+            // 기기 한 대 더 빌리려는 경우
+            throw new MoreDeviceException();
+        }
+        Device device = deviceRepository.findById(id).orElse(null);
+        if(device==null) {
+            // 기기 아이디가 틀린 경우
+            throw new NoDeviceException();
+        }
+        if(device.getCurrentUser()!=null) {
+            // 기기가 빌린 상태인 경우
+            throw new RentedDeviceException();
+        }
+        device.setStartDate(LocalDate.now());
+        device.setEndDate(LocalDate.now().plusMonths(3));
+        device.setCurrentUser(u.getId());
+        deviceRepository.save(device);
+        u.setCurrentUsingDevice(device);
+        userRepository.save(u);
+        return device;
     }
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
@@ -75,8 +112,25 @@ public class DeviceController {
                 LocalDate endDate = LocalDate.parse(nextLine[4], DateTimeFormatter.ofPattern("yyyyMMdd"));
                 data.setStartDate(startDate);
                 data.setEndDate(endDate);
+                data.setCurrentUser(nextLine[5]);
             }
             deviceRepository.save(data);
         }
+    }
+    @ExceptionHandler(WrongAuthenticationIdException.class)
+    public DeviceError WrongAuthenticationIdExceptionHandler(WrongAuthenticationIdException e) {
+        return new DeviceError("AuthenticationId is wrong.");
+    }
+    @ExceptionHandler(NoDeviceException.class)
+    public DeviceError NoDeviceExceptionHandler(NoDeviceException e) {
+        return new DeviceError("There is no device using given id.");
+    }
+    @ExceptionHandler(RentedDeviceException.class)
+    public DeviceError RentedDeviceExceptionHandler(RentedDeviceException e) {
+        return new DeviceError("This device is already rented.");
+    }
+    @ExceptionHandler(MoreDeviceException.class)
+    public DeviceError MoreDeviceExceptionHandler(MoreDeviceException e) {
+        return new DeviceError("You can rent only one device.");
     }
 }
