@@ -21,19 +21,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import com.univice.cse364project.user.User;
+import com.univice.cse364project.user.UserRepository;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 @RestController
 @RequestMapping(value="/")
 public class InquiryController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final InquiryRepository InquiryRepository;
-
-    public InquiryController(InquiryRepository inquiryRepository) throws IOException, CsvException {
+    private final UserRepository userRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    public InquiryController(InquiryRepository inquiryRepository, UserRepository userRepository) throws IOException, CsvException {
         this.InquiryRepository = inquiryRepository;
+        this.userRepository = userRepository;
         long size = inquiryRepository.count();
         if(size == 0) {
             LOG.info("Loading inquiries");
@@ -55,15 +70,42 @@ public class InquiryController {
 
 
     @RequestMapping(value="/inquiry/write", method=RequestMethod.POST)
-    public Inquiry insertBoard(@RequestBody Inquiry inquiry){
+    public Inquiry insertBoard(@RequestBody ObjectNode saveObj) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper2 = new ObjectMapper();
+        User user = mapper.treeToValue(saveObj.get("user"), User.class);
+        Inquiry inquiry = mapper2.treeToValue(saveObj.get("inquiry"), Inquiry.class);
+        String authId = user.getAuthenticationId();
+        User u = userRepository.findById(authId).orElse(null);
+        if(u==null) {
+            // 로그인 여부 확인
+            throw new WrongAuthenticationIdException();
+        }
         return InquiryRepository.save(inquiry);
     }//게시글 작성
 
 
     @RequestMapping(value="/inquiry/{id}", method=RequestMethod.DELETE)
-    public void deleteBoard(@PathVariable String id){
+    public void deleteBoard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException{
+
+        ObjectMapper mapper = new ObjectMapper();
+        User user = mapper.treeToValue(saveObj.get("user"), User.class);
+        String Writer = saveObj.get("writer").asText();
+        Inquiry thisboard = InquiryRepository.findById(id).orElse(null);
+        String authId = user.getAuthenticationId();
+        User u = userRepository.findById(authId).orElse(null);
+        if(u==null) {
+            // 로그인 여부 확인
+            throw new WrongAuthenticationIdException();
+        }
+        if(Writer!=thisboard.getWriter()){
+            throw new InsufficientpermissionException();
+            //이글의 writer와 로그인된 유저 writer가 다른 경우(근데 id가 writer인지 아니면 별개?)
+        }
         InquiryRepository.deleteById(id);
-    }//게시글 삭제
+
+    }//게시글 삭제(작성자용)
+
 
     @RequestMapping(value="/inquiry/{id}", method=RequestMethod.PUT)
     public Inquiry editboard(@RequestBody Inquiry newboard, @PathVariable String id) {
@@ -79,7 +121,6 @@ public class InquiryController {
                 });
     }//게시글 수정하기
 
-
     @RequestMapping(value="/inquiry/change/{id}", method=RequestMethod.PUT)
          public Inquiry Solved (@PathVariable String id){
              return InquiryRepository.findById(id)
@@ -87,9 +128,12 @@ public class InquiryController {
                          inquiry.setConfirmed(true);
                          return InquiryRepository.save(inquiry);
                      })
-                     .orElseGet(null);//요구사항 해결 완료
+                     .orElseGet(() -> {
+                         throw new InvalidInquiryException();
+                     });//요구사항 해결 완료
          }
     /*
+
     @RequestMapping(value="/inquiry/write", method=RequestMethod.GET)
     public String openBoardWrite() throws Exception {
         return "/inquiry/restBoardWrite";
@@ -97,6 +141,19 @@ public class InquiryController {
 */
 
 
+    @ExceptionHandler(InvalidInquiryException.class)
+    public InquiryError InvalidInquiryExceptionHandler(InvalidInquiryException e){
+        return new InquiryError("There is no board.");
+    }
+
+    @ExceptionHandler(WrongAuthenticationIdException.class)
+    public InquiryError WrongAuthenticationIdExceptionHandler(WrongAuthenticationIdException e) {
+        return new InquiryError("AuthenticationId is wrong.");
+    }
+    @ExceptionHandler(InsufficientpermissionException.class)
+    public InquiryError InsufficientpermissionExceptionHandler(InsufficientpermissionException e) {
+        return new InquiryError("Permission is not sufficient.");
+    }
 
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
