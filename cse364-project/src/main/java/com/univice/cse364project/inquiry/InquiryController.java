@@ -46,38 +46,48 @@ public class InquiryController {
     private final UserRepository userRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
+
     public InquiryController(InquiryRepository inquiryRepository, UserRepository userRepository) throws IOException, CsvException {
         this.InquiryRepository = inquiryRepository;
         this.userRepository = userRepository;
         long size = inquiryRepository.count();
-        if(size == 0) {
+        if (size == 0) {
             LOG.info("Loading inquiries");
             readDataFromCsv("inquiry.csv");
         }
     }
 
 
-    @RequestMapping(value="/inquirys", method=RequestMethod.GET)
-    public List<Inquiry> getAllInquiry(){
+    @RequestMapping(value = "/inquirys", method = RequestMethod.GET)
+    public List<Inquiry> getAllInquiry() {
         return InquiryRepository.findAll();
     }//게시글 보여주기
 
-    @RequestMapping(value="/inquiry/{id}", method=RequestMethod.GET)
-    public Inquiry getBoard(@PathVariable String id){
+    @RequestMapping(value = "/inquiry/{id}", method = RequestMethod.GET)
+    public Inquiry getBoard(@PathVariable String id) {
         LOG.info("Getting Board with Id: {}.", id);
         return InquiryRepository.findById(id).orElse(null);
     }//게시글 찾기
 
+    @RequestMapping(value = "/inquiry/writer/{writer}", method = RequestMethod.GET)
+    public List<Inquiry> writerBoard(@PathVariable String writer) {
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("writer").is(writer));
 
-    @RequestMapping(value="/inquiry/write", method=RequestMethod.POST)
-    public Inquiry insertBoard(@RequestBody ObjectNode saveObj) throws JsonProcessingException{
+        List<Inquiry> boardlist = mongoTemplate.find(query1, Inquiry.class);
+        LOG.info("Getting Board with Writer: {}.", writer);
+
+        return boardlist;
+    }//작성자 게시글 찾기
+
+    @RequestMapping(value = "/inquiry/write", method = RequestMethod.POST)
+    public Inquiry insertBoard(@RequestBody ObjectNode saveObj) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectMapper mapper2 = new ObjectMapper();
-        User user = mapper.treeToValue(saveObj.get("user"), User.class);
-        Inquiry inquiry = mapper2.treeToValue(saveObj.get("inquiry"), Inquiry.class);
-        String authId = user.getAuthenticationId();
+        Inquiry inquiry = mapper.treeToValue(saveObj.get("inquiry"), Inquiry.class);
+        String authId = saveObj.get("authenticationId").asText();
+        inquiry.setWriter(authId);
         User u = userRepository.findById(authId).orElse(null);
-        if(u==null) {
+        if (u == null) {
             // 로그인 여부 확인
             throw new WrongAuthenticationIdException();
         }
@@ -85,30 +95,47 @@ public class InquiryController {
     }//게시글 작성
 
 
-    @RequestMapping(value="/inquiry/{id}", method=RequestMethod.DELETE)
-    public void deleteBoard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException{
-
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.treeToValue(saveObj.get("user"), User.class);
-        String Writer = saveObj.get("writer").asText();
+    @RequestMapping(value = "/inquiry/{id}", method = RequestMethod.DELETE)
+    public void deleteBoard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException {
+        String authId = saveObj.get("authenticationId").asText();
         Inquiry thisboard = InquiryRepository.findById(id).orElse(null);
-        String authId = user.getAuthenticationId();
         User u = userRepository.findById(authId).orElse(null);
-        if(u==null) {
+        String writer = thisboard.getWriter();
+        if (u == null) {
             // 로그인 여부 확인
             throw new WrongAuthenticationIdException();
         }
-        if(Writer!=thisboard.getWriter()){
-            throw new InsufficientpermissionException();
-            //이글의 writer와 로그인된 유저 writer가 다른 경우(근데 id가 writer인지 아니면 별개?)
+        if (!authId.equals(writer)) {
+
+            if( u.isAdmin() == false){
+                throw new InsufficientpermissionException();
+            }
+
+            //이글의 writer와 로그인된 유저 authId가 다른 경우
         }
+
         InquiryRepository.deleteById(id);
 
-    }//게시글 삭제(작성자용)
+    }//게시글 삭제
 
 
-    @RequestMapping(value="/inquiry/{id}", method=RequestMethod.PUT)
-    public Inquiry editboard(@RequestBody Inquiry newboard, @PathVariable String id) {
+    @RequestMapping(value = "/inquiry/{id}", method = RequestMethod.PUT)
+    public Inquiry editboard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Inquiry newboard = mapper.treeToValue(saveObj.get("inquiry"), Inquiry.class);
+        String authId = saveObj.get("authenticationId").asText();
+        Inquiry lastboard = InquiryRepository.findById(id).orElse(null);
+        User u = userRepository.findById(authId).orElse(null);
+        if (u == null) {
+            // 로그인 여부 확인
+            throw new WrongAuthenticationIdException();
+        }
+        if (!authId.equals(lastboard.getWriter())) {
+            if( u.isAdmin() == false){
+                throw new InsufficientpermissionException();
+            }
+            //이글의 writer와 로그인된 유저 authId가 다른 경우
+        }
         return InquiryRepository.findById(id)
                 .map(inquiry -> {
                     inquiry.setContents(newboard.getContents());
@@ -121,18 +148,28 @@ public class InquiryController {
                 });
     }//게시글 수정하기
 
-    @RequestMapping(value="/inquiry/change/{id}", method=RequestMethod.PUT)
-         public Inquiry Solved (@PathVariable String id){
-             return InquiryRepository.findById(id)
-                     .map(inquiry -> {
-                         inquiry.setConfirmed(true);
-                         return InquiryRepository.save(inquiry);
-                     })
-                     .orElseGet(() -> {
-                         throw new InvalidInquiryException();
-                     });//요구사항 해결 완료
-         }
-    /*
+    @RequestMapping(value = "/inquiry/change/{id}", method = RequestMethod.PUT)
+    public Inquiry Solved(@RequestBody ObjectNode saveObj, @PathVariable String id) {
+        String authId = saveObj.get("authenticationId").asText();
+        User u = userRepository.findById(authId).orElse(null);
+        if (u == null) {
+            // 로그인 여부 확인
+            throw new WrongAuthenticationIdException();
+        }
+        if (u.isAdmin() != true) {
+            throw new InsufficientpermissionException();
+        }
+        return InquiryRepository.findById(id)
+                .map(inquiry -> {
+                    inquiry.setConfirmed(true);
+                    return InquiryRepository.save(inquiry);
+                })
+                .orElseGet(() -> {
+                    throw new InvalidInquiryException();
+                });//요구사항 해결 완료
+    }
+
+         /*
 
     @RequestMapping(value="/inquiry/write", method=RequestMethod.GET)
     public String openBoardWrite() throws Exception {
@@ -142,7 +179,7 @@ public class InquiryController {
 
 
     @ExceptionHandler(InvalidInquiryException.class)
-    public InquiryError InvalidInquiryExceptionHandler(InvalidInquiryException e){
+    public InquiryError InvalidInquiryExceptionHandler(InvalidInquiryException e) {
         return new InquiryError("There is no board.");
     }
 
@@ -150,15 +187,17 @@ public class InquiryController {
     public InquiryError WrongAuthenticationIdExceptionHandler(WrongAuthenticationIdException e) {
         return new InquiryError("AuthenticationId is wrong.");
     }
+
     @ExceptionHandler(InsufficientpermissionException.class)
     public InquiryError InsufficientpermissionExceptionHandler(InsufficientpermissionException e) {
+
         return new InquiryError("Permission is not sufficient.");
     }
 
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
         CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));
-        String [] nextLine;
+        String[] nextLine;
         while ((nextLine = reader.readNext()) != null) {
             Inquiry data = new Inquiry();
             data.setId(nextLine[0]);
