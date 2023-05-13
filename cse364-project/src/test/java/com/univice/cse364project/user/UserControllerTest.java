@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
     @Autowired
     private UserController userController;
-
     @Autowired
     private MongoTemplate mongoTemplate;
     @Test
@@ -106,10 +105,10 @@ class UserControllerTest {
         user.put("id", "kicker5236");
         user.put("password", "Kicker6325!");
         user.put("email", "kicker5236@unist.ac.kr");
-        user.put("studentId", "20181111");
+        user.put("studentId", "20192222");
         ObjectNode requestBody = om.createObjectNode();
         requestBody.put("user", user);
-        requestBody.put("idNum","1111111111111");
+        requestBody.put("idNum","2222222222222");
 
         User expectedUser = new User();
         expectedUser.setId("kicker5236");
