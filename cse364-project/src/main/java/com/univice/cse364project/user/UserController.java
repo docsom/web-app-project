@@ -107,8 +107,6 @@ public class UserController {
             //해당 학번으로 만든 계정이 있는 경우
             throw new ExistingStudentIdException();
         } else if(existingResident != null && !existingResident.getIdNumber().equals(idNum)){
-            System.out.println("idNum " + idNum);
-            System.out.println("IdNumber " + existingResident.getIdNumber());
             //주민등록번호가 학번과 일치하지 않는 경우
             throw new UnmatchedIdNumberException();
         } else {
