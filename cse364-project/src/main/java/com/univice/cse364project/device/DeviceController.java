@@ -69,7 +69,7 @@ public class DeviceController {
         }
         return target;
     }
-    @PutMapping(value="/device/{id}")
+    @PutMapping(value="/device/rent/{id}")
     public Device rentDevice(@RequestBody ObjectNode saveObj, @PathVariable String id) {
         String authId = saveObj.get("authenticationId").asText();
         User u = userRepository.findById(authId).orElse(null);
@@ -96,6 +96,35 @@ public class DeviceController {
         deviceRepository.save(device);
         u.setCurrentUsingDevice(device);
         userRepository.save(u);
+        return device;
+    }
+    @PutMapping(value = "/device/return/{id}")
+    public Device returnDevice(@RequestBody ObjectNode saveObj, @PathVariable String id) {
+        String authId = saveObj.get("authenticationId").asText();
+        User u = userRepository.findById(authId).orElse(null);
+        if(u==null) {
+            // 로그인 여부 확인
+            throw new WrongAuthenticationIdException();
+        }
+        if(u.getCurrentUsingDevice()==null){
+            // 빌린 기기가 없는 경우
+            throw new NoRentedDeviceException();
+        }
+        Device device = deviceRepository.findById(id).orElse(null);
+        if(device==null) {
+            // 기기 아이디가 틀린 경우
+            throw new NoDeviceException();
+        }
+        if(!Objects.equals(device.getCurrentUser(), u.getId())) {
+            // 유저가 빌린 기기가 아닌 경우
+            throw new WrongRentedDeviceException();
+        }
+        u.setCurrentUsingDevice(null);
+        userRepository.save(u);
+        device.setStartDate(null);
+        device.setEndDate(null);
+        device.setCurrentUser(null);
+        deviceRepository.save(device);
         return device;
     }
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
@@ -132,5 +161,13 @@ public class DeviceController {
     @ExceptionHandler(MoreDeviceException.class)
     public DeviceError MoreDeviceExceptionHandler(MoreDeviceException e) {
         return new DeviceError("You can rent only one device.");
+    }
+    @ExceptionHandler(NoRentedDeviceException.class)
+    public DeviceError NoRentedDeviceExceptionHandler(NoRentedDeviceException e) {
+        return new DeviceError("You have no rented device.");
+    }
+    @ExceptionHandler(WrongRentedDeviceException.class)
+    public DeviceError WrongRentedDeviceExceptionHandler(WrongRentedDeviceException e) {
+        return new DeviceError("This device is not your rented device.");
     }
 }
