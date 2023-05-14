@@ -3,6 +3,7 @@ package com.univice.cse364project.device;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.univice.cse364project.Generated;
 import com.univice.cse364project.user.User;
 import com.univice.cse364project.user.UserRepository;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class DeviceController {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Generated
     public DeviceController(DeviceRepository deviceRepository, UserRepository userRepository) throws IOException, CsvException {
         this.deviceRepository = deviceRepository;
         this.userRepository = userRepository;
@@ -127,6 +129,7 @@ public class DeviceController {
         deviceRepository.save(device);
         return device;
     }
+    @Generated
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
         CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));

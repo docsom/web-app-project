@@ -2,6 +2,7 @@ package com.univice.cse364project.inquiry;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.univice.cse364project.Generated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,7 @@ public class InquiryController {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Generated
     public InquiryController(InquiryRepository inquiryRepository, UserRepository userRepository) throws IOException, CsvException {
         this.InquiryRepository = inquiryRepository;
         this.userRepository = userRepository;
@@ -192,6 +194,7 @@ public class InquiryController {
         return new InquiryError("Permission is not sufficient.");
     }
 
+    @Generated
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
         CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));
