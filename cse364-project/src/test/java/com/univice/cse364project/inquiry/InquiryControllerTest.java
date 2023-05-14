@@ -43,11 +43,7 @@ class InquiryControllerTest {
         query.addCriteria(Criteria.where("isAdmin").is(false));
         User u = mongoTemplate.findOne(query, User.class);
         String authid = u.getAuthenticationId();
-
-
-
         requestBody.put("inquiry",inquiry);
-
         requestBody.put("authenticationId",authid);
 
         Query query1 = new Query();
@@ -159,6 +155,34 @@ class InquiryControllerTest {
         //when
         //then
         assertThrows(InsufficientpermissionException.class, ()->inquiryController.editboard(requestBody,"inquiry5"));
+    }
+
+    @Test
+    @DisplayName("Udmin Put board with Insufficientauthority")
+    void PutadminboardwithInsufficientauthority() throws JsonProcessingException{
+        //given
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode inquiry = om.createObjectNode();
+        ObjectNode requestBody = om.createObjectNode();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isAdmin").is(true));
+        User u = mongoTemplate.findOne(query, User.class);
+        String authid = u.getAuthenticationId();
+        inquiry.put("id", "inquiry77");
+        inquiry.put("title", "chantest5!");
+        inquiry.put("contents", "can make board");
+        inquiry.put("confirmed", false);
+        requestBody.put("inquiry", inquiry);
+        requestBody.put("authenticationId",authid);
+        Query query1 = new Query();
+
+        //when
+        inquiryController.editboard(requestBody, "inquiry3");
+        //then
+        query1.addCriteria(Criteria.where("id").is("inquirytest"));
+        Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
+
+        assertTrue(newboard!=null);
     }
 
     @Test
