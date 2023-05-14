@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univice.cse364project.user.User;
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +118,21 @@ public class DeviceControllerTest {
         assertThrows(WrongAuthenticationIdException.class, ()->deviceController.returnDevice(requestBody, "device2"));
     }
     @Test
+    @DisplayName("Return when user has no device")
+    void returnNoDevice() {
+        //given
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is("aaa"));
+        User u = mongoTemplate.findOne(query, User.class);
+        String authId = u.getAuthenticationId();
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode requestBody = om.createObjectNode();
+        requestBody.put("authenticationId", authId);
+        //when
+        //then
+        assertThrows(NoRentedDeviceException.class, ()->deviceController.returnDevice(requestBody, "device2"));
+    }
+    @Test
     @DisplayName("Return wrong id device")
     void returnWrongIdDevice() {
         //given
@@ -145,21 +161,5 @@ public class DeviceControllerTest {
         //when
         //then
         assertThrows(WrongRentedDeviceException.class, ()->deviceController.returnDevice(requestBody, "device2"));
-    }
-    @Test
-    @DisplayName("Return when user has no device")
-    void returnNoDevice() {
-        //given
-        Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("bbb"));
-        User u = mongoTemplate.findOne(query, User.class);
-        String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("authenticationId", authId);
-        //when
-        deviceController.returnDevice(requestBody, "device1");
-        //then
-        assertThrows(NoRentedDeviceException.class, ()->deviceController.returnDevice(requestBody, "device2"));
     }
 }
