@@ -3,8 +3,10 @@ package com.univice.cse364project.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
     @Autowired
     private UserController userController;
@@ -102,22 +105,16 @@ class UserControllerTest {
         ObjectMapper om = new ObjectMapper();
 
         ObjectNode user = om.createObjectNode();
-        user.put("id", "kicker5236");
-        user.put("password", "Kicker6325!");
-        user.put("email", "kicker5236@unist.ac.kr");
+        user.put("id", "kym20181016");
+        user.put("password", "kym000131!");
+        user.put("email", "kym20181016@unist.ac.kr");
         user.put("studentId", "20192222");
         ObjectNode requestBody = om.createObjectNode();
         requestBody.put("user", user);
         requestBody.put("idNum","2222222222222");
 
-        User expectedUser = new User();
-        expectedUser.setId("kicker5236");
-        expectedUser.setPassword("Kicker6325!");
-        expectedUser.setEmail("kicker5236@unist.ac.kr");
-        expectedUser.setStudentId("20181111");
-
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("kicker5236"));
+        query.addCriteria(Criteria.where("id").is("kym20181016"));
 
         User before = mongoTemplate.findOne(query, User.class);
         //when
@@ -171,5 +168,13 @@ class UserControllerTest {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is("aaa"));
         assertTrue(result.equals(mongoTemplate.findOne(query, User.class).getAuthenticationId()));
+    }
+
+    @AfterAll
+    void afterAll() {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is("kym20181016"));
+        User testUser = mongoTemplate.findOne(query, User.class);
+        mongoTemplate.remove(testUser);
     }
 }
