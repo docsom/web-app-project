@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.device.DeviceRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -136,17 +137,28 @@ class InquiryControllerTest {
         assertThrows(WrongAuthenticationIdException.class, ()->inquiryController.editboard(requestBody,"inquiry8"));
     }
 
+
     @Test
     @DisplayName("Put board with Insufficientauthority")
     void PutboardwithInsufficientauthority() {
         //given
         ObjectMapper om = new ObjectMapper();
+        ObjectNode inquiry = om.createObjectNode();
         ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("authenticationId","1111111111111");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isAdmin").is(false));
+        User u = mongoTemplate.findOne(query, User.class);
+        String authid = u.getAuthenticationId();
+        inquiry.put("id", "inquiry5");
+        inquiry.put("title", "chantest5!");
+        inquiry.put("contents", "can make board");
+        inquiry.put("confirmed", false);
+
+        requestBody.put("authenticationId",authid);
 
         //when
         //then
-        assertThrows(WrongAuthenticationIdException.class, ()->inquiryController.editboard(requestBody,"inquiry8"));
+        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editboard(requestBody,"inquiry5"));
     }
 
     @Test
