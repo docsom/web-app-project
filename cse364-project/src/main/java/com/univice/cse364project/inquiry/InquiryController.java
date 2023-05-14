@@ -107,11 +107,9 @@ public class InquiryController {
         }
         if (!authId.equals(writer)) {
 
-            if( u.isAdmin() == false){
+            if( u.isAdmin() == false) {
                 throw new InsufficientpermissionException();
-            }
-
-            //이글의 writer와 로그인된 유저 authId가 다른 경우
+            }//이글의 writer와 로그인된 유저 authId가 다른 경우
         }
 
         InquiryRepository.deleteById(id);
