@@ -149,12 +149,12 @@ class InquiryControllerTest {
         inquiry.put("title", "chantest5!");
         inquiry.put("contents", "can make board");
         inquiry.put("confirmed", false);
-
+        requestBody.put("inquiry", inquiry);
         requestBody.put("authenticationId",authid);
 
         //when
         //then
-        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editboard(requestBody,"inquiry5"));
+        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editboard(requestBody,"inquiry4"));
     }
 
     @Test
@@ -324,7 +324,7 @@ class InquiryControllerTest {
 
 
     @Test
-    @DisplayName("Delete Board")
+    @DisplayName("Delete Board2")
     void deleteBoard() throws JsonProcessingException {
         //given
 
@@ -349,12 +349,72 @@ class InquiryControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Delete Board")
+    void deleteBoard2() throws JsonProcessingException {
+        //given
+
+
+        ObjectMapper om = new ObjectMapper();
+/*
+        ObjectNode inquiry = om.createObjectNode();
+        inquiry.put("id", "inquiry18");
+        inquiry.put("title", "chantest18!");
+        inquiry.put("contents", " board18");
+        inquiry.put("confirmed", false);
+        ObjectNode requestBody = om.createObjectNode();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isAdmin").is(false));
+        User u = mongoTemplate.findOne(query, User.class);
+        String authid = u.getAuthenticationId();
+
+        requestBody.put("inquiry",inquiry);
+        requestBody.put("authenticationId",authid);
+
+        inquiryController.insertBoard(requestBody);
+*/
+        ObjectNode requestBody1 = om.createObjectNode();
+
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("isAdmin").is(true));
+        User u1 = mongoTemplate.findOne(query1, User.class);
+        String authid1 = u1.getAuthenticationId();
+
+        requestBody1.put("authenticationId",authid1);
+
+        Query query2 = new Query();
+        query2.addCriteria(Criteria.where("writer").is(authid1));
+
+        //when
+        inquiryController.deleteBoard(requestBody1, "inquiry5");
+        //then
+        Inquiry deleted = mongoTemplate.findOne(query2, Inquiry.class);
+        assertTrue(deleted == null);
+
+    }
     @AfterAll
-    void afterAll() {
+    void afterAll() throws IOException, CsvException{
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is("chantest8!"));
         Inquiry test = mongoTemplate.findOne(query, Inquiry.class);
         mongoTemplate.remove(test);
+
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode inquiry = om.createObjectNode();
+        inquiry.put("id", "inquiry5");
+        inquiry.put("title", "test5");
+        inquiry.put("contents", " content5");
+        inquiry.put("confirmed", false);
+        ObjectNode requestBody = om.createObjectNode();
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("isAdmin").is(false));
+        User u = mongoTemplate.findOne(query1, User.class);
+        String authid = u.getAuthenticationId();
+        requestBody.put("inquiry",inquiry);
+        requestBody.put("authenticationId",authid);
+
+        inquiryController.insertBoard(requestBody);
+
     }
 
 }
