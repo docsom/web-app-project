@@ -2,26 +2,38 @@ package com.univice.cse364project.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.user.User;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DeviceControllerTest {
     @Autowired
     private DeviceController deviceController;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private DeviceRepository deviceRepository;
+    @BeforeAll
+    void beforeTest() throws IOException, CsvException {
+        deviceRepository.deleteAll();
+        deviceController.readDataFromCsv("device.csv");
+    }
     @Test
     @DisplayName("Check all end date of devices")
     void checkEndDate() {
