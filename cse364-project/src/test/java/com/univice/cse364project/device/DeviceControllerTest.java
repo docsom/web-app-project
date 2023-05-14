@@ -205,6 +205,30 @@ public class DeviceControllerTest {
         mongoTemplate.save(u);
         mongoTemplate.save(d);
     }
+    @Test
+    @DisplayName("Rent and Return correctly")
+    void rentAndReturnDevice() {
+        //given
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is("test"));
+        User u = mongoTemplate.findOne(query, User.class);
+        Device d = mongoTemplate.findOne(query, Device.class);
+        String authId = u.getAuthenticationId();
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode requestBody = om.createObjectNode();
+        requestBody.put("authenticationId", authId);
+        //when
+        deviceController.rentDevice(requestBody, "test");
+        //then
+        u = mongoTemplate.findOne(query, User.class);
+        d = mongoTemplate.findOne(query, Device.class);
+        assertEquals(d.getCurrentUser(), u.getId());
+        //when
+        deviceController.returnDevice(requestBody, "test");
+        //then
+        d = mongoTemplate.findOne(query, Device.class);
+        assertNull(d.getCurrentUser());
+    }
     @AfterAll
     void afterTest() {
         Query query = new Query();
