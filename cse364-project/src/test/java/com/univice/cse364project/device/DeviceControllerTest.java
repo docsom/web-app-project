@@ -2,21 +2,16 @@ package com.univice.cse364project.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.opencsv.exceptions.CsvException;
 import com.univice.cse364project.user.User;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,13 +25,24 @@ public class DeviceControllerTest {
     @Autowired
     private DeviceRepository deviceRepository;
     @BeforeAll
-    void beforeTest() throws IOException, CsvException {
-        deviceRepository.deleteAll();
-        deviceController.readDataFromCsv("device.csv");
+    void beforeTest() {
+        User testUser = new User();
+        testUser.setId("test");
+        Device testDevice = new Device();
+        testDevice.setId("test");
+        testDevice.setType("test");
+        mongoTemplate.insert(testUser, "user");
+        mongoTemplate.insert(testDevice, "device");
     }
     @Test
     @DisplayName("Check all end date of devices")
     void checkEndDate() {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is("test"));
+        Device d = mongoTemplate.findOne(query, Device.class);
+        d.setEndDate(LocalDate.of(2022,5,15));
+        d.setCurrentUser("test");
+        mongoTemplate.save(d);
         List<Device> devices = deviceController.getAllDevices();
         for (Device device:devices) {
             if(device.getEndDate()==null) continue;
@@ -47,7 +53,7 @@ public class DeviceControllerTest {
     @DisplayName("Check num of devices is 4")
     void checkNumDevices() {
         List<Device> devices = deviceController.getAllDevices();
-        assertEquals(devices.size(), 4);
+        assertEquals(devices.size(), deviceRepository.count());
     }
     @Test
     @DisplayName("Show monitor devices")
@@ -77,23 +83,27 @@ public class DeviceControllerTest {
     void rentMoreDevice() {
         //given
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("bbb"));
+        query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
         ObjectMapper om = new ObjectMapper();
         ObjectNode requestBody = om.createObjectNode();
         requestBody.put("authenticationId", authId);
         //when
-        deviceController.rentDevice(requestBody, "device1");
+        Device d = mongoTemplate.findOne(query, Device.class);
+        u.setCurrentUsingDevice(d);
+        mongoTemplate.save(u);
         //then
         assertThrows(MoreDeviceException.class, ()->deviceController.rentDevice(requestBody, "device2"));
+        u.setCurrentUsingDevice(null);
+        mongoTemplate.save(u);
     }
     @Test
     @DisplayName("Rent wrong id device")
     void rentWrongIdDevice() {
         //given
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("aaa"));
+        query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
         ObjectMapper om = new ObjectMapper();
@@ -108,15 +118,22 @@ public class DeviceControllerTest {
     void rentRentedDevice() {
         //given
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("aaa"));
+        query.addCriteria(Criteria.where("currentUsingDevice").is(null));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
         ObjectMapper om = new ObjectMapper();
         ObjectNode requestBody = om.createObjectNode();
         requestBody.put("authenticationId", authId);
         //when
+        Query query2 = new Query();
+        query2.addCriteria(Criteria.where("id").is("test"));
+        Device d = mongoTemplate.findOne(query2, Device.class);
+        d.setCurrentUser("test");
+        mongoTemplate.save(d);
         //then
-        assertThrows(RentedDeviceException.class, ()->deviceController.rentDevice(requestBody, "device1"));
+        assertThrows(RentedDeviceException.class, ()->deviceController.rentDevice(requestBody, "test"));
+        d.setCurrentUser(null);
+        mongoTemplate.save(d);
     }
     @Test
     @DisplayName("Return with wrong authentication id")
@@ -134,7 +151,7 @@ public class DeviceControllerTest {
     void returnNoDevice() {
         //given
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("aaa"));
+        query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
         ObjectMapper om = new ObjectMapper();
@@ -149,29 +166,52 @@ public class DeviceControllerTest {
     void returnWrongIdDevice() {
         //given
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("bbb"));
+        query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
         ObjectMapper om = new ObjectMapper();
         ObjectNode requestBody = om.createObjectNode();
         requestBody.put("authenticationId", authId);
         //when
+        Device d = mongoTemplate.findOne(query, Device.class);
+        u.setCurrentUsingDevice(d);
+        mongoTemplate.save(u);
         //then
         assertThrows(NoDeviceException.class, ()->deviceController.returnDevice(requestBody, "device5"));
+        u.setCurrentUsingDevice(null);
+        mongoTemplate.save(u);
     }
     @Test
     @DisplayName("Return wrong rented device")
     void returnWrongRentedDevice() {
         //given
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is("bbb"));
+        query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
         ObjectMapper om = new ObjectMapper();
         ObjectNode requestBody = om.createObjectNode();
         requestBody.put("authenticationId", authId);
         //when
+        Device d = mongoTemplate.findOne(query, Device.class);
+        d.setCurrentUser("test2");
+        u.setCurrentUsingDevice(d);
+        mongoTemplate.save(u);
+        mongoTemplate.save(d);
         //then
-        assertThrows(WrongRentedDeviceException.class, ()->deviceController.returnDevice(requestBody, "device2"));
+        assertThrows(WrongRentedDeviceException.class, ()->deviceController.returnDevice(requestBody, "test"));
+        d.setCurrentUser(null);
+        u.setCurrentUsingDevice(null);
+        mongoTemplate.save(u);
+        mongoTemplate.save(d);
+    }
+    @AfterAll
+    void afterTest() {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is("test"));
+        User u = mongoTemplate.findOne(query, User.class);
+        Device d = mongoTemplate.findOne(query, Device.class);
+        mongoTemplate.remove(u);
+        mongoTemplate.remove(d);
     }
 }
