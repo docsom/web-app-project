@@ -3,9 +3,9 @@ package com.univice.cse364project.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.internal.connection.tlschannel.WouldBlockException;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.univice.cse364project.Generated;
 import com.univice.cse364project.dormResident.DormResident;
 import com.univice.cse364project.dormResident.DormResidentRepository;
 import org.slf4j.Logger;
@@ -29,6 +29,7 @@ public class UserController {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Generated
     public UserController(UserRepository userRepository, DormResidentRepository dormResidentRepository) throws IOException, CsvException {
         this.userRepository = userRepository;
         this.dormResidentRepository = dormResidentRepository;
@@ -39,6 +40,8 @@ public class UserController {
             readDataFromCsv("user.csv");
         }
     }
+
+    @Generated
     public void readDataFromCsv(String fileName) throws IOException, CsvException {
         ClassLoader classLoader = getClass().getClassLoader();
         CSVReader reader = new CSVReader(new FileReader(classLoader.getResource(fileName).getPath()));
