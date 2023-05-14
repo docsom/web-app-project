@@ -1,4 +1,4 @@
-# 23Spring_SoftwareEngineering_Group5
+# MILESTONE2
 
 You first download the Dockerfile and run.sh in the environment folder and  
 run the following commands:  
@@ -14,94 +14,22 @@ In run.sh, MongoDB wants to know our space.
 The container will execute a bash shell by default when the built image is launched.  
 It takes **10 minutes** in our local machine. Please wait for building completely.
 
-## REST APIs
-In another terminal of the docker container, you can run curl commands that request GET, PUT, and POST methods.  
-In the database, there are records about employees and movies.  
-### STEP 2
-1. GET  
-A GET request is supposed to get the list of employees stored in the database.  
-Examples of curl command for GET requests are as follows:  
-- curl -X GET http://localhost:8080/employees  
+## Features
+Our web application manages electronic device rental service for UNIST dormitory residents. In below, it explains about 
+features required to achieve the goal of our application, and APIs to implement each feature.
+
+### Register & Login
+Our application is only for UNIST residents. Therefore, if user cannot authenticate itself by student ID and identification
+number, the user cannot register to our app.
+1. registerNewUser 
+- curl -X POST http://localhost:8080/register -H "Content-type:application/json" -d '{"movieId": 3953, "title": "Avatar 
+2 (2022)", "genre": "Sci-Fi"}'
 You can get a list of all employees in the database. The expected output of it will be  
 **[{"id":1,"name":"Bilbo Baggins","role":"burglar"},{"id":2,"name":"Frodo Baggins","role":"thief"}]**
 
-- curl -X GET http://localhost:8080/employees/1  
-You can get a record of employee whose id is 1 in JSON format. The expected output of it will be  
-**{"id":1,"name":"Bilbo Baggins","role":"burglar"}**
+### Device Rental Status Board
 
-- curl -X GET http://localhost:8080/employees/99  
-You can get an error message if you request a record of the employee not in the database.  
-The expected output of it will be  
-**Could not find employee 99**
+### Rent & Return Device
 
-2. POST  
-A POST request is suppose to create a new record in the database.  
-An example of curl command for POST requests is as follows:  
-- curl -X POST http://localhost:8080/employees -H "Content-type:application/json" -d '{"name": "Samwise Gamgee", "role": "gardener"}'  
-You can create a new record in JSON format. The id of the employee will be assigned automatically.  
-The expected output of it will be  
-**{"id":3,"name":"Samwise Gamgee","role":"gardener"}**
-3. PUT  
-A PUT request is suppose to update an existing record in the database.  
-An example of curl command for PUT requests is as follows:  
-- curl -X PUT http://localhost:8080/employees/3 -H "Content-type:application/json" -d '{"name": "Samwise Gamgee", "role": "ring bearer"}'  
-You can update an existing record of the employee whose id is 3 in JSON format.  
-The expected output of it will be  
-**{"id":3,"name":"Samwise Gamgee","role":"ring bearer"}**
+### Inquiry Board for using the service better
 
-### STEP 3
-1. GET  
-A GET request is supposed to get the list of movies rated whose average ratings are greater than or equal to the given rating in JSON format.    
-Examples of curl command for GET requests are as follows:  
-- curl -X GET http://localhost:8080/ratings/4  
-It takes about **5 minutes** in our local machine. Please wait for getting the output.
-The expected output of it will be  
-**{  
-  “title” : “Toy Story (1995)”,  
-  “genre”: “Animation|Children's|Comedy”  
-},  
-{  
-  “title” : “xxx”,  
-  “genres”: “xxx”  
-},  
-{ ...**
-
-- curl -X GET http://localhost:8080/ratings/0  
-You can get an error message if you request with the given rating which is not 1, 2, 3, 4, or 5.  
-The expected output of it will be  
-**{"message":"Value of the rating is invalid."}**
-
-- curl -X GET http://localhost:8080/movie/3  
-You can get a record of movie whose movieId is 3 in JSON format. The expected output of it will be  
-**{"movieId":3,"title":"Grumpier Old Men (1995)","genre":"Comedy|Romance"}**
-
-- curl -X GET http://localhost:8080/user/1  
-You can get a record of user whose userId is 1 in JSON format. The expected output of it will be  
-**{"userId":1,"gender":"F","age":1,"occupation":10,"zipcode":"48067"}**
-
-2. POST  
-A POST request is suppose to create a new record in the database.  
-An example of curl command for POST requests is as follows:  
-- curl -X POST http://localhost:8080/movie/create -H "Content-type:application/json" -d '{"movieId": 3953, "title": "Avatar 2 (2022)", "genre": "Sci-Fi"}'  
-You can create a new record in JSON format. 
-The expected output of it will be  
-**{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi"}**
-
-- curl -X POST http://localhost:8080/user/create -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
-You can create a new record in JSON format. 
-The expected output of it will be  
-**{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }**
-
-3. PUT  
-A PUT request is suppose to update an existing record in the database.  
-An example of curl command for PUT requests is as follows: 
-
-- curl -X PUT http://localhost:8080/movie/3953 -H "Content-type:application/json" -d '{"movieId": 3953, "titles": "Avatar 2 (2022)", "genre": "Sci-Fi|Action"}'  
-You can update an existing record of the movie whose id is 3953 in JSON format.  
-The expected output of it will be  
-**{"movieId":3953,"title":"Avatar 2 (2022)","genre":"Sci-Fi|Action"}**
-
-- curl -X PUT http://localhost:8080/user/3935 -H "Content-type:application/json" -d '{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }'  
-You can update an existing record of the user whose id is 3935 in JSON format. 
-The expected output of it will be  
-**{"userId": 3953, "gender": "F", "age": 25, "occupation": 18, "zipcode": "92648" }**
