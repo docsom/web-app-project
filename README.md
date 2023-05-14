@@ -1,4 +1,4 @@
-# 23Spring_SoftwareEngineering_Group5
+# MILESTONE1
 
 You first download the Dockerfile and run.sh in the environment folder and  
 run the following commands:  
