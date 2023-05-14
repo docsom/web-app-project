@@ -46,15 +46,24 @@ class InquiryControllerTest {
         requestBody.put("inquiry",inquiry);
         requestBody.put("authenticationId",authid);
 
-        Query query1 = new Query();
-        query1.addCriteria(Criteria.where("id").is("inquirytest"));
-
         //when
         inquiryController.insertBoard(requestBody);
-        //then
-        Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
-        assertTrue(newboard != null && newboard instanceof Inquiry);
 
+        ObjectNode inquiry2 = om.createObjectNode();
+        inquiry2.put("id", "inquirytest");
+        inquiry2.put("title", "testtitle");
+        inquiry2.put("contents", " testboard");
+        inquiry2.put("confirmed", false);
+        ObjectNode requestBody2 = om.createObjectNode();
+        Query query2 = new Query();
+        query2.addCriteria(Criteria.where("studentId").is("20201234"));
+        User u2 = mongoTemplate.findOne(query2, User.class);
+        String authid2 = u2.getAuthenticationId();
+        requestBody2.put("inquiry",inquiry2);
+        requestBody2.put("authenticationId",authid2);
+
+        //when
+        inquiryController.insertBoard(requestBody2);
 
     }
     @Test
@@ -215,7 +224,35 @@ class InquiryControllerTest {
         Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
         assertTrue(!beforecontents.equals(newboard.getContents()) || !beforetitle.equals(newboard.getTitle()));
     }
+    @Test
+    @DisplayName("Edit board2")
+    void editboard2() throws JsonProcessingException {
+        //given
+        ObjectMapper om = new ObjectMapper();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isAdmin").is(true));
+        User u = mongoTemplate.findOne(query, User.class);
+        String authid = u.getAuthenticationId();
+        ObjectNode inquiry = om.createObjectNode();
 
+
+        inquiry.put("id", "inquirytest3");
+        inquiry.put("title", "chantestischange3");
+        inquiry.put("contents", " boardischanged3");
+        inquiry.put("confirmed", false);
+        ObjectNode requestBody = om.createObjectNode();
+        requestBody.put("inquiry",inquiry);
+        requestBody.put("authenticationId",authid);
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("id").is("inquirytest2"));
+
+        //when
+
+        inquiryController.editboard(requestBody, "inquirytest2");
+        //then
+        Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
+        assertTrue(newboard!=null);
+    }
     @Test
     @DisplayName("Put board with not login")
     void PutboardsolvedwithNotlogin() {
@@ -398,6 +435,11 @@ class InquiryControllerTest {
         query.addCriteria(Criteria.where("title").is("chantest8!"));
         Inquiry test = mongoTemplate.findOne(query, Inquiry.class);
         mongoTemplate.remove(test);
+
+        Query query2 = new Query();
+        query2.addCriteria(Criteria.where("title").is("chantestischange3"));
+        Inquiry test2 = mongoTemplate.findOne(query2, Inquiry.class);
+        mongoTemplate.remove(test2);
 
         ObjectMapper om = new ObjectMapper();
         ObjectNode inquiry = om.createObjectNode();
