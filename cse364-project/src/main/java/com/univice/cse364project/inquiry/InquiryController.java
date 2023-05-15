@@ -107,7 +107,7 @@ public class InquiryController {
             // 로그인 여부 확인
             throw new WrongAuthenticationIdException();
         }
-        if (!authId.equals(writer)) {
+        if (!u.getId().equals(writer)) {
 
             if( u.isAdmin() == false) {
                 throw new InsufficientpermissionException();
