@@ -182,7 +182,7 @@ The expected output of it will be
 }**
 
 2. writerBoard  
-when you want to see your inquiry boards, using this method.  
+When you want to see your inquiry boards, using this method.  
 This method takes data about a “writer”.  We search same "writer" in InquiryRepository,  stores all inquiries written by that writer in a list, and shows them all at once. This has the effect of reminding the user if their inquiry has been resolved or what they wrote.
 
 - curl -X GET http://localhost:8080/writer/aaa  
