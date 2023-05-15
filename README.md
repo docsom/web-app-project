@@ -122,6 +122,45 @@ This method returns the status of devices which included in given type by path v
   }**
 
 ### Rent & Return Device
+You can rent and return device with your "Authentication ID" to verify your registeration. You should keep your "Authentication ID" from loginUser method.
+1. rentDevice  
+This method expects one attribute "authenticationId" as a json body of the request. There are 4 devices: device1, device2, device3 and device4 in the DB.
+You can choose the device and put the device id on your URL. The startDate of renting device is today's date. The endDate of renting device is 3 months from today.
+There are 4 conditons to rent the device. 1. Right "authenticationId" 2. User have no device. Only one device can be rented per user. 3. Right device id 4. The device is not rented by anyone. If four conditions are met, you can rent the device. Otherwise, error message will occur.
+
+- curl -X PUT http://localhost:8080/device/rent/device1 "Content-type:application/json" -d '{"authenticationId": "6461b4e01b7d2d614f9ccccb"}'  
+The expected output of it will be  
+**{
+    "id": "device1",
+    "name": "ipad1",
+    "type": "tablet",
+    "startDate": [
+        2023,
+        5,
+        15
+    ],
+    "endDate": [
+        2023,
+        8,
+        15
+    ],
+    "currentUser": "rnjsdydals01"
+}**  
+
+2. returnDevice  
+This method expects one attribute "authenticationId" as a json body of the request. You put the device id of your rented device on your URL to return the device.
+There are 4 conditons to return the device. 1. Right "authenticationId" 2. User have one device. 3. Right device id 4. The device ID should match the device ID you rented. If four conditions are met, you can return the device. Otherwise, error message will occur.
+
+- curl -X PUT http://localhost:8080/device/return/device1 "Content-type:application/json" -d '{"authenticationId": "6461b4e01b7d2d614f9ccccb"}'  
+The expected output of it will be  
+**{
+    "id": "device1",
+    "name": "ipad1",
+    "type": "tablet",
+    "startDate": null,
+    "endDate": null,
+    "currentUser": null
+}**  
 
 ### Inquiry Board for using the service better
 
