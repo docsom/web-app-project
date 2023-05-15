@@ -56,8 +56,7 @@ the devices.
 This method returns the status of all devices.
 - curl -X GET http://localhost:8080/devices  
 The expected output of it will be like  
-**[
-  {
+**{
   "id": "device1",
   "name": "ipad1",
   "type": "tablet",
@@ -96,8 +95,7 @@ The expected output of it will be like
   "startDate": null,
   "endDate": null,
   "currentUser": null
-  }
-  ]**
+  }**
 
 2. getAllTypeDevices  
 This method returns the status of devices which included in given type by path variable. There are two types of devices
