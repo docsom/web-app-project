@@ -180,7 +180,7 @@ The expected output of it will be
 {“id”=”inquiry6”, “title”=”test6”, “contents”=”content6”, “writer”=”ccc”, “confirmed”, false}
 }**
 
-2. writerBoard
+2. writerBoard  
 This method takes data about a “writer”, stores all inquiries written by that writer in a list, and shows them all at once. This has the effect of reminding the user if their inquiry has been resolved or what they wrote.
 
 - curl -X GET http://localhost:8080/writer/aaa  
@@ -190,7 +190,7 @@ The expected output of it will be
 }**
 
 
-3. insertBoard
+3. insertBoard  
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request.
 First, check if this user is a registered user in mongo DB through "athenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "athenticationId".
 
@@ -205,7 +205,7 @@ The expected output of it will be
 The expected output of it will be  
   **{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
-5. editBoard
+5. editBoard  
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. And pathvariable is “id”
 First, verify that the user is logged in via "athenticationId". If the login is confirmed, we check to see if the user has the same "athenticationId" as the user stored as an “writer”, or if no posts match the initially received ID. If this user is different from the “writer”, we'll check to see if they have admin permissions, and if so, they can edit. If no posts match the ID, a new post is created and saved to the DB.  
 
@@ -214,14 +214,14 @@ The expected output of it will be
 **{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
 
-6. solved
+6. solved  
 This method is an intuitive way to check if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. It takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "isconfirmed" as TRUE..  
 
 - curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{" athenticationId ":" 6461b4e01b7d2d614f9ccccc "}'  
 The expected output of it will be  
 **{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":true}**
 
-7. deleteBoard
+7. deleteBoard  
 Delete board This method takes only the athenticationId and uses it for deletion. First, it checks if the user can log in with the athenticationId, and if the athenticationId of the user stored as "writer" is the same, it deletes the user. However, if this user and "writer" are different, it checks if the user has admin privileges, and if so, proceeds to delete.  
 
 - curl -X DELETE http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{" athenticationId ":" 6461b4e01b7d2d614f9ccccb "}'  
