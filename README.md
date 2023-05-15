@@ -51,7 +51,7 @@ The expected output of it will be
 
 ### Device Rental Status Board
 Before renting the device, user should know which device is available. Our app provides two ways to get status of 
-the devices.
+the devices. Each method in below checks the end date of rented devices. If the end date has passed today, the device will be returned automatically and other users can rent the device.
 1. getAllDevices  
 This method returns the status of all devices.
 - curl -X GET http://localhost:8080/devices  
