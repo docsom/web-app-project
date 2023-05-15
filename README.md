@@ -194,7 +194,7 @@ The expected output of it will be
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request.
 First, check if this user is a registered user in mongo DB through "athenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "athenticationId".
 
-- curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan", "contents":"content7", "confirmed":false}, " athenticationId ":"6461b4e01b7d2d614f9ccccb"}'  
+- curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan", "contents":"content7", "confirmed":false}, "athenticationId":"6461b4e01b7d2d614f9ccccb"}'  
 The expected output of it will be  
 **{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:"6461b4e01b7d2d614f9ccccb", "confirmed":false}**
 
@@ -209,7 +209,7 @@ The expected output of it will be
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. And pathvariable is “id”
 First, verify that the user is logged in via "athenticationId". If the login is confirmed, we check to see if the user has the same "athenticationId" as the user stored as an “writer”, or if no posts match the initially received ID. If this user is different from the “writer”, we'll check to see if they have admin permissions, and if so, they can edit. If no posts match the ID, a new post is created and saved to the DB.  
 
-- curl -X PUT http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan is change", "contents":"content is changed", "confirmed":false}, " athenticationId ":"6461b4e01b7d2d614f9ccccb"}'  
+- curl -X PUT http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan is change", "contents":"content is changed", "confirmed":false}, "athenticationId":"6461b4e01b7d2d614f9ccccb"}'  
 The expected output of it will be  
 **{"id":"inquiry7", "title":"testchan is change ", "contents":"content is changed", “writer”:"6461b4e01b7d2d614f9ccccb", "confirmed":false}**
 
