@@ -244,7 +244,7 @@ The expected output of it will be
 3. insertBoard  
 If you need to fix your rental device or to use another one that we don't have, you make a inquiry board to fast communication with admin.  
  This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. This "inquiry" must have id, title, contents, confirmed, then its data will be record at InquiryRepository. 
-First, check if this user is a registered user in mongo DB through "athenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "athenticationId".
+First, check if this user is a registered user in mongo DB through "authenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "userId"(this user is having that authenticationId).
 
 - curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{
     "inquiry": {
@@ -280,8 +280,8 @@ The expected output of it will be
 
 5. editBoard  
 When you fix your inquiry board's title or contents, you can edit your board if you want.
-This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. And pathvariable is “id”
-First, verify that the user is logged in via "athenticationId". If the login is confirmed, we check to see if the user has the same "athenticationId" as the user stored as an “writer”, or if no posts match the initially received ID. If this user is different from the “writer”, we'll check to see if they have admin permissions, and if so, they can edit. If no posts match the ID, a new post is created and saved to the DB.  
+This method expects two attributes "inquiry" and "authenticationId" as a json body of the request. And pathvariable is “id”
+First, verify that the user is logged in via "authenticationId". If the login is confirmed, we check to see if the user has the same "userId" (this user is having that authenticationId)as the user stored as an “writer”, or if no posts match the initially received ID. If this user is different from the “writer”, we'll check to see if they have admin permissions, and if so, they can edit. If no posts match the ID, a new post is created and saved to the DB.  
 
 - curl -X PUT http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan is change", "contents":"content is changed", "confirmed":false}, "authenticationId":"6461b4e01b7d2d614f9ccccb"}'  
 The expected output of it will be  
@@ -289,7 +289,7 @@ The expected output of it will be
     "id": "inquiry7",
     "title": "testchan is change",
     "contents": "content is changed",
-    "writer": "bbb",
+    "writer": "rnjsdydals01",
     "confirmed": false
 }**
 
@@ -304,7 +304,7 @@ The expected output of it will be
     "id": "inquiry7",
     "title": "testchan is change",
     "contents": "content is changed",
-    "writer": "bbb",
+    "writer": "rnjsdydals01",
     "confirmed": true
 }**
 7. deleteBoard  
