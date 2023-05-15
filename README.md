@@ -295,8 +295,8 @@ The expected output of it will be
 
 
 6. solved  
-This method is for admin. because we must check inquiry boards as soon as faster.  
-This method is an intuitive way to check if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. In the DB, admin ID is 'aaa' and admin passwrod is '1234'. You first login the admin and get athenticationId of the admin. This method takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "isconfirmed" as TRUE..  
+This method is for admin. We must check inquiry boards as soon as faster to handle the users' inquiries.  
+So, it is an intuitive way to show if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. In the DB, admin ID is 'aaa' and admin passwrod is '1234'. You first login the admin and get athenticationId of the admin. This method takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "confirmed" as TRUE.  
 
 - curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{"authenticationId":**"{authenticationId of the admin}"**}'  
 The expected output of it will be  
