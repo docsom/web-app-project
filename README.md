@@ -165,7 +165,6 @@ The expected output of it will be
 }**  
 
 ### Inquiry Board for using the service better
-Inquiry Board for using the service better
 The application serves as a inquiry board for logged-in users to conveniently receive suggestions from customers regarding device failures, device needs, etc. Therefore, permissions became an important component, like customers except for the admin having the right to edit and delete only their own posts.
 
 1. Getallinquiry  
