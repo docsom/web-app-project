@@ -215,9 +215,9 @@ The expected output of it will be
 
 
 6. solved  
-This method is an intuitive way to check if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. It takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "isconfirmed" as TRUE..  
+This method is an intuitive way to check if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. In the DB, admin ID is 'aaa' and admin passwrod is '1234'. You first login the admin and get athenticationId of the admin. This method takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "isconfirmed" as TRUE..  
 
-- curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{"athenticationId":"6461b4e01b7d2d614f9ccccc"}'  
+- curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{"athenticationId":**"{athenticationId of the admin}"**}'  
 The expected output of it will be  
 **{"id":"inquiry7", "title":"testchan is change", "contents":" content is changed", "writer":"6461b4e01b7d2d614f9ccccb", "confirmed":true}**
 
