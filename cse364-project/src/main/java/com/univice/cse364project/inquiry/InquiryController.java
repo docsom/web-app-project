@@ -130,7 +130,7 @@ public class InquiryController {
             // 로그인 여부 확인
             throw new WrongAuthenticationIdException();
         }
-        if (lastboard==null || !authId.equals(lastboard.getWriter())) {
+        if (lastboard==null || !u.getId().equals(lastboard.getWriter())) {
             if( u.isAdmin() == false){
                 throw new InsufficientpermissionException();
             }
