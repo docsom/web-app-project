@@ -202,7 +202,7 @@ The expected output of it will be
 **{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:"6461b4e01b7d2d614f9ccccb", "confirmed":false}**
 
 
-4. getBoard
+4. getBoard  
 If you want to check your inquiry board is confirmed or find your boards contents using this.  
 This method expects only one attributes "id" as a pathvarible data. When we get id, our method fine "inquiry" 
 - curl -X GET http://localhost:8080/inquiry/inquiry7  
