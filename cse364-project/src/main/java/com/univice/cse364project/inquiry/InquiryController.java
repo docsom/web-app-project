@@ -87,12 +87,12 @@ public class InquiryController {
         ObjectMapper mapper = new ObjectMapper();
         Inquiry inquiry = mapper.treeToValue(saveObj.get("inquiry"), Inquiry.class);
         String authId = saveObj.get("authenticationId").asText();
-        inquiry.setWriter(authId);
         User u = userRepository.findById(authId).orElse(null);
         if (u == null) {
             // 로그인 여부 확인
             throw new WrongAuthenticationIdException();
         }
+        inquiry.setWriter(u.getId());
         return InquiryRepository.save(inquiry);
     }//게시글 작성
 
@@ -168,15 +168,6 @@ public class InquiryController {
                     throw new InvalidInquiryException();
                 });//요구사항 해결 완료
     }
-
-         /*
-
-    @RequestMapping(value="/inquiry/write", method=RequestMethod.GET)
-    public String openBoardWrite() throws Exception {
-        return "/inquiry/restBoardWrite";
-    }//게시글 작성 화면인데 보류
-*/
-
 
     @ExceptionHandler(InvalidInquiryException.class)
     public InquiryError InvalidInquiryExceptionHandler(InvalidInquiryException e) {
