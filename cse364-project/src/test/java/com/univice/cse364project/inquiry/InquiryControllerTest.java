@@ -154,7 +154,7 @@ class InquiryControllerTest {
         query.addCriteria(Criteria.where("isAdmin").is(false));
         User u = mongoTemplate.findOne(query, User.class);
         String authid = u.getAuthenticationId();
-        inquiry.put("id", "inquiry5");
+        inquiry.put("id", "inquiry6");
         inquiry.put("title", "chantest5!");
         inquiry.put("contents", "can make board");
         inquiry.put("confirmed", false);
@@ -163,7 +163,7 @@ class InquiryControllerTest {
 
         //when
         //then
-        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editBoard(requestBody,"inquiry4"));
+        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editBoard(requestBody,"inquiry6"));
     }
 
     @Test
@@ -393,23 +393,6 @@ class InquiryControllerTest {
 
 
         ObjectMapper om = new ObjectMapper();
-/*
-        ObjectNode inquiry = om.createObjectNode();
-        inquiry.put("id", "inquiry18");
-        inquiry.put("title", "chantest18!");
-        inquiry.put("contents", " board18");
-        inquiry.put("confirmed", false);
-        ObjectNode requestBody = om.createObjectNode();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("isAdmin").is(false));
-        User u = mongoTemplate.findOne(query, User.class);
-        String authid = u.getAuthenticationId();
-
-        requestBody.put("inquiry",inquiry);
-        requestBody.put("authenticationId",authid);
-
-        inquiryController.insertBoard(requestBody);
-*/
         ObjectNode requestBody1 = om.createObjectNode();
 
         Query query1 = new Query();
@@ -420,7 +403,7 @@ class InquiryControllerTest {
         requestBody1.put("authenticationId",authid1);
 
         Query query2 = new Query();
-        query2.addCriteria(Criteria.where("writer").is(authid1));
+        query2.addCriteria(Criteria.where("id").is("inquiry5"));
 
         //when
         inquiryController.deleteBoard(requestBody1, "inquiry5");
