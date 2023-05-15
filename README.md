@@ -168,20 +168,21 @@ The application serves as a inquiry board for logged-in users to conveniently re
 This method shows all posts stored in the MongoDB so far, regardless of permissions, at the time of input.
 -curl -X GET http://localhost:8080/inquirys
 The expected output of it will be
+**{
 {“id”=”inquiry1”, “title”=”test1”, “contents”=”content1”, “writer”=”aaa”, “confirmed”, false},
 {“id”=”inquiry2”, “title”=”test2”, “contents”=”content2”, “writer”=”aaa”, “confirmed”, false},
 {“id”=”inquiry3”, “title”=”test3”, “contents”=”content3”, “writer”=”bbb”, “confirmed”, false},
 {“id”=”inquiry4”, “title”=”test4”, “contents”=”content4”, “writer”=”bbb”, “confirmed”, false},
 {“id”=”inquiry5”, “title”=”test5”, “contents”=”content5”, “writer”=”ccc”, “confirmed”, false},
 {“id”=”inquiry6”, “title”=”test6”, “contents”=”content6”, “writer”=”ccc”, “confirmed”, false}
-
+}**
 2.Writerboard
 This method takes data about a “writer”, stores all inquiries written by that writer in a list, and shows them all at once. This has the effect of reminding the user if their inquiry has been resolved or what they wrote.
 -curl -X GET http://localhost:8080/writer/aaa
 The expected output of it will be
-{“id”=”inquiry1”, “title”=”test1”, “contents”=”content1”, “writer”=”aaa”, “confirmed”, false},
+**{{“id”=”inquiry1”, “title”=”test1”, “contents”=”content1”, “writer”=”aaa”, “confirmed”, false},
 {“id”=”inquiry2”, “title”=”test2”, “contents”=”content2”, “writer”=”aaa”, “confirmed”, false}
-
+}**
 
 
 3.Insertboard
@@ -190,13 +191,13 @@ First, check if this user is a registered user in mongo DB through "athenticatio
 
 -curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan", "contents":"content7", "confirmed":false}, " athenticationId ":" 6461b4e01b7d2d614f9ccccb "}'
 The expected output of it will be
-{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'
+**{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
 4.Getboard
 This method takes the ID of a post and makes it easier to find posts with that ID.
 -curl -X GET http://localhost:8080/inquiry/inquiry7
 The expected output of it will be
-{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'
+**{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
 5.Editboard
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. And pathvariable is “id”
@@ -205,7 +206,7 @@ First, verify that the user is logged in via "athenticationId". If the login is 
 -curl -X PUT http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan is change", "contents":"content is changed", "confirmed":false}, " athenticationId ":" 6461b4e01b7d2d614f9ccccb "}'
 
 The expected output of it will be
-{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'
+**{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
 
 6.Solved
@@ -214,7 +215,7 @@ This method is an intuitive way to check if the inquiry has been resolved. This 
 -curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{" athenticationId ":" 6461b4e01b7d2d614f9ccccc "}'
 
 The expected output of it will be
-{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":true}'
+**{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":true}**
 
 7.Deleteboard
 Delete board This method takes only the athenticationId and uses it for deletion. First, it checks if the user can log in with the athenticationId, and if the athenticationId of the user stored as "writer" is the same, it deletes the user. However, if this user and "writer" are different, it checks if the user has admin privileges, and if so, proceeds to delete.
@@ -222,6 +223,6 @@ Delete board This method takes only the athenticationId and uses it for deletion
 -curl -X DELETE http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{" athenticationId ":" 6461b4e01b7d2d614f9ccccb "}'
 
 The expected output of it will be
-{}
+**{}**
 
 
