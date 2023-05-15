@@ -50,7 +50,8 @@ The expected output of it will be
 **6461b4e01b7d2d614f9ccccb**
 
 ### Device Rental Status Board
-Before renting the device, user should know which device is available. Our app provides two ways to get status of devices.
+Before renting the device, user should know which device is available. Our app provides two ways to get status of 
+the devices.
 1. getAllDevices  
 This method returns the status of all devices.
 - curl -X GET http://localhost:8080/devices  
@@ -102,7 +103,7 @@ The expected output of it will be like
 This method returns the status of devices which included in given type by path variable. There are two types of devices
  in our app, monitor and tablet.
 - curl -X GET http://localhost:8080/devices/{type}  
-  The expected output of it will be like
+  The expected output of it will be like  
 **{
   "id": "device3",
   "name": "monitor1",
