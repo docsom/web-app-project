@@ -98,9 +98,9 @@ The expected output of it will be like
   }**
 
 2. getAllTypeDevices  
-This method returns the status of devices which included in given type by path variable. There are two types of devices
+This method returns the status of devices included in given type by path variable. There are two types of devices
  in our app, monitor and tablet.
-- curl -X GET http://localhost:8080/devices/{type}  
+- curl -X GET http://localhost:8080/devices/monitor  
   The expected output of it will be like  
 **{
   "id": "device3",
