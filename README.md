@@ -172,24 +172,73 @@ If you want to see all inquiry board, using this method.
 This method accesses the inquiry Database in our MongoDB and shows us all the inquiries we have.
 - curl -X GET http://localhost:8080/inquirys  
 The expected output of it will be  
-**{
-{“id”=”inquiry1”, “title”=”test1”, “contents”=”content1”, “writer”=”aaa”, “confirmed”, false},
-{“id”=”inquiry2”, “title”=”test2”, “contents”=”content2”, “writer”=”aaa”, “confirmed”, false},
-{“id”=”inquiry3”, “title”=”test3”, “contents”=”content3”, “writer”=”bbb”, “confirmed”, false},
-{“id”=”inquiry4”, “title”=”test4”, “contents”=”content4”, “writer”=”bbb”, “confirmed”, false},
-{“id”=”inquiry5”, “title”=”test5”, “contents”=”content5”, “writer”=”ccc”, “confirmed”, false},
-{“id”=”inquiry6”, “title”=”test6”, “contents”=”content6”, “writer”=”ccc”, “confirmed”, false}
-}**
+**[
+    {
+        "id": "inquiry1",
+        "title": "test1",
+        "contents": "content1",
+        "writer": "aaa",
+        "confirmed": false
+    },
+    {
+        "id": "inquiry2",
+        "title": "test2",
+        "contents": "content2",
+        "writer": "aaa",
+        "confirmed": false
+    },
+    {
+        "id": "inquiry3",
+        "title": "chantest5!",
+        "contents": "can make board",
+        "writer": "bbb",
+        "confirmed": true
+    },
+    {
+        "id": "inquiry4",
+        "title": "chantest5!",
+        "contents": "can make board",
+        "writer": "bbb",
+        "confirmed": false
+    },
+    {
+        "id": "inquiry6",
+        "title": "test6",
+        "contents": "content6",
+        "writer": "ccc",
+        "confirmed": false
+    },
+    {
+        "id": "inquiry5",
+        "title": "test5",
+        "contents": " content5",
+        "writer": "bbb",
+        "confirmed": false
+    }
+]**
 
 2. writerBoard  
 When you want to see your inquiry boards, using this method.  
 This method takes data about a “writer”.  We search same "writer" in InquiryRepository,  stores all inquiries written by that writer in a list, and shows them all at once. This has the effect of reminding the user if their inquiry has been resolved or what they wrote.
 
-- curl -X GET http://localhost:8080/writer/aaa  
+- curl -X GET http://localhost:8080/inquiry/writer/aaa  
 The expected output of it will be  
-**{{“id”=”inquiry1”, “title”=”test1”, “contents”=”content1”, “writer”=”aaa”, “confirmed”, false},
-{“id”=”inquiry2”, “title”=”test2”, “contents”=”content2”, “writer”=”aaa”, “confirmed”, false}
-}**
+**[
+    {
+        "id": "inquiry1",
+        "title": "test1",
+        "contents": "content1",
+        "writer": "aaa",
+        "confirmed": false
+    },
+    {
+        "id": "inquiry2",
+        "title": "test2",
+        "contents": "content2",
+        "writer": "aaa",
+        "confirmed": false
+    }
+]**
 
 
 3. insertBoard  
@@ -197,9 +246,23 @@ If you need to fix your rental device or to use another one that we don't have, 
  This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. This "inquiry" must have id, title, contents, confirmed, then its data will be record at InquiryRepository. 
 First, check if this user is a registered user in mongo DB through "athenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "athenticationId".
 
-- curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan", "contents":"content7", "confirmed":false}, "athenticationId":"6461b4e01b7d2d614f9ccccb"}'  
+- curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{
+    "inquiry": {
+        "id": "inquiry7",
+        "title": "testchan",
+        "contents": "content7",
+        "confirmed": false
+    },
+    "authenticationId": "6461b4e01b7d2d614f9ccccb"
+}'  
 The expected output of it will be  
-**{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:"6461b4e01b7d2d614f9ccccb", "confirmed":false}**
+**{
+    "id": "inquiry7",
+    "title": "testchan",
+    "contents": "content7",
+    "writer": "rnjsdydals01",
+    "confirmed": false
+}**
 
 
 4. getBoard  
@@ -207,31 +270,48 @@ If you want to check your inquiry board is confirmed or find your boards content
 This method expects only one attributes "id" as a pathvarible data. When we get id, our method fine "inquiry" 
 - curl -X GET http://localhost:8080/inquiry/inquiry7  
 The expected output of it will be  
-  **{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:"6461b4e01b7d2d614f9ccccb", "confirmed":false}**
+**{
+    "id": "inquiry7",
+    "title": "testchan",
+    "contents": "content7",
+    "writer": "rnjsdydals01",
+    "confirmed": false
+}**
 
 5. editBoard  
 When you fix your inquiry board's title or contents, you can edit your board if you want.
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. And pathvariable is “id”
 First, verify that the user is logged in via "athenticationId". If the login is confirmed, we check to see if the user has the same "athenticationId" as the user stored as an “writer”, or if no posts match the initially received ID. If this user is different from the “writer”, we'll check to see if they have admin permissions, and if so, they can edit. If no posts match the ID, a new post is created and saved to the DB.  
 
-- curl -X PUT http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan is change", "contents":"content is changed", "confirmed":false}, "athenticationId":"6461b4e01b7d2d614f9ccccb"}'  
+- curl -X PUT http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan is change", "contents":"content is changed", "confirmed":false}, "authenticationId":"6461b4e01b7d2d614f9ccccb"}'  
 The expected output of it will be  
-**{"id":"inquiry7", "title":"testchan is change ", "contents":"content is changed", “writer”:"6461b4e01b7d2d614f9ccccb", "confirmed":false}**
+**{
+    "id": "inquiry7",
+    "title": "testchan is change",
+    "contents": "content is changed",
+    "writer": "bbb",
+    "confirmed": false
+}**
 
 
 6. solved  
 This method is for admin. because we must check inquiry boards as soon as faster.  
 This method is an intuitive way to check if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. In the DB, admin ID is 'aaa' and admin passwrod is '1234'. You first login the admin and get athenticationId of the admin. This method takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "isconfirmed" as TRUE..  
 
-- curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{"athenticationId":**"{athenticationId of the admin}"**}'  
+- curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{"authenticationId":**"{authenticationId of the admin}"**}'  
 The expected output of it will be  
-**{"id":"inquiry7", "title":"testchan is change", "contents":" content is changed", "writer":"6461b4e01b7d2d614f9ccccb", "confirmed":true}**
-
+**{
+    "id": "inquiry7",
+    "title": "testchan is change",
+    "contents": "content is changed",
+    "writer": "bbb",
+    "confirmed": true
+}**
 7. deleteBoard  
 If the inquiry is solved or don't need to solve, you can delete your inquiry board using this method.  
 This method takes only the athenticationId and uses it for deletion. First, it checks if the user can log in with the athenticationId, and if the athenticationId of the user stored as "writer" is the same, it deletes the user. However, if this user and "writer" are different, it checks if the user has admin privileges, and if so, proceeds to delete.  
 
-- curl -X DELETE http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"athenticationId":"6461b4e01b7d2d614f9ccccb"}'  
+- curl -X DELETE http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{"authenticationId":"6461b4e01b7d2d614f9ccccb"}'    
 The expected output of it will be  
 **{}**
 
