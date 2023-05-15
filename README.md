@@ -20,7 +20,7 @@ features required to achieve the goal of our application, and APIs to implement 
 
 ### Register & Login
 Our application is only for UNIST residents. Therefore, if user cannot authenticate itself by student ID and identification
-number, the user cannot register to our app.
+number, our app doesn't allow the user to register.
 1. registerNewUser   
 This method expects two attributes "user" and "idNum" as a json body of the request. If the studentId in "user" exists in 
 dormResident table, and "idNum" matches to its identification number, it allows to register a new user.
