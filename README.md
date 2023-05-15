@@ -168,6 +168,7 @@ The expected output of it will be
 The application serves as a inquiry board for logged-in users to conveniently receive suggestions from customers regarding device failures, device needs, etc. Therefore, permissions became an important component, like customers except for the admin having the right to edit and delete only their own posts.
 
 1. getAllInquiry
+If you want to see all inquiry board, using this method. 
 This method accesses the inquiry Database in our MongoDB and shows us all the inquiries we have.
 - curl -X GET http://localhost:8080/inquirys  
 The expected output of it will be  
@@ -180,7 +181,8 @@ The expected output of it will be
 {“id”=”inquiry6”, “title”=”test6”, “contents”=”content6”, “writer”=”ccc”, “confirmed”, false}
 }**
 
-2. writerBoard  
+2. writerBoard
+when you want to see your inquiry board,  
 This method takes data about a “writer”.  We search same "writer" in InquiryRepository,  stores all inquiries written by that writer in a list, and shows them all at once. This has the effect of reminding the user if their inquiry has been resolved or what they wrote.
 
 - curl -X GET http://localhost:8080/writer/aaa  
@@ -191,7 +193,8 @@ The expected output of it will be
 
 
 3. insertBoard  
-This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. This "inquiry" must have id, title, contents, confirmed, then its data will be record at InquiryRepository. 
+
+ This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. This "inquiry" must have id, title, contents, confirmed, then its data will be record at InquiryRepository. 
 First, check if this user is a registered user in mongo DB through "athenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "athenticationId".
 
 - curl -X POST http://localhost:8080/inquiry/write -H "Content-type:application/json" -d '{"inquiry":{"id":"inquiry7", "title":"testchan", "contents":"content7", "confirmed":false}, "athenticationId":"6461b4e01b7d2d614f9ccccb"}'  
@@ -200,6 +203,7 @@ The expected output of it will be
 
 
 4. getBoard
+
 This method expects only one attributes "id" as a pathvarible data. When we get id, our method fine "inquiry" 
 - curl -X GET http://localhost:8080/inquiry/inquiry7  
 The expected output of it will be  
