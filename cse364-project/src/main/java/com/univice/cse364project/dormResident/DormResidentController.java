@@ -2,6 +2,7 @@ package com.univice.cse364project.dormResident;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.univice.cse364project.Generated;
 import com.univice.cse364project.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.FileReader;
 import java.io.IOException;
 
-
+@Generated
 @RestController
 @RequestMapping(value = "/")
 public class DormResidentController {
