@@ -149,7 +149,7 @@ The expected output of it will be
 }**  
 
 2. returnDevice  
-Although device will be returned automatically after 3 months, you can return the device before that by this method.
+Although the device will be returned automatically after 3 months, you can return the device before that by this method.
 It expects one attribute "authenticationId" as a json body of the request. You should put the device id of your rented device on your URL to return the device.
 There are 4 conditions to return the device. 1. Right "authenticationId" 2. User have one device. 3. Right device id 4. The device ID should match the device ID you rented. If four conditions are met, you can return the device. Otherwise, error message will occur.
 
