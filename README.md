@@ -167,8 +167,7 @@ The expected output of it will be
 ### Inquiry Board for using the service better
 The application serves as a inquiry board for logged-in users to conveniently receive suggestions from customers regarding device failures, device needs, etc. Therefore, permissions became an important component, like customers except for the admin having the right to edit and delete only their own posts.
 
-1. Getallinquiry  
-This method shows all posts stored in the MongoDB so far, regardless of permissions, at the time of input.
+1. getAllInquiry
 
 - curl -X GET http://localhost:8080/inquirys  
 The expected output of it will be  
@@ -181,8 +180,7 @@ The expected output of it will be
 {“id”=”inquiry6”, “title”=”test6”, “contents”=”content6”, “writer”=”ccc”, “confirmed”, false}
 }**
 
-
-2. Writerboard  
+2. writerBoard
 This method takes data about a “writer”, stores all inquiries written by that writer in a list, and shows them all at once. This has the effect of reminding the user if their inquiry has been resolved or what they wrote.
 
 - curl -X GET http://localhost:8080/writer/aaa  
@@ -192,7 +190,7 @@ The expected output of it will be
 }**
 
 
-3. Insertboard  
+3. insertBoard
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request.
 First, check if this user is a registered user in mongo DB through "athenticationId". If it is, save the data received from the inquiry to the DB and specify "writer" as "athenticationId".
 
@@ -201,14 +199,13 @@ The expected output of it will be
 **{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
 
-4. Getboard  
-This method takes the ID of a post and makes it easier to find posts with that ID.
+4. getBoard
 
 - curl -X GET http://localhost:8080/inquiry/inquiry7  
 The expected output of it will be  
   **{"id":"inquiry7", "title":"testchan", "contents":"content7", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
-5. Editboard  
+5. editBoard
 This method expects two attributes "inquiry" and "athenticationId" as a json body of the request. And pathvariable is “id”
 First, verify that the user is logged in via "athenticationId". If the login is confirmed, we check to see if the user has the same "athenticationId" as the user stored as an “writer”, or if no posts match the initially received ID. If this user is different from the “writer”, we'll check to see if they have admin permissions, and if so, they can edit. If no posts match the ID, a new post is created and saved to the DB.  
 
@@ -217,14 +214,14 @@ The expected output of it will be
 **{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":false}'**
 
 
-6. Solved  
+6. solved
 This method is an intuitive way to check if the inquiry has been resolved. This is a very important part of the application and can only be used by the admin account. It takes the "athenticationId" and the inquiry id, first checks to see if the user has admin privileges, then finds the inquiry and returns "isconfirmed" as TRUE..  
 
 - curl -X PUT http://localhost:8080/inquiry/change/inquiry7 -H "Content-type:application/json" -d '{" athenticationId ":" 6461b4e01b7d2d614f9ccccc "}'  
 The expected output of it will be  
 **{"id":"inquiry7", "title":" testchan is change ", "contents":" content is changed", “writer”:" 6461b4e01b7d2d614f9ccccb ", "confirmed":true}**
 
-7. Deleteboard  
+7. deleteBoard
 Delete board This method takes only the athenticationId and uses it for deletion. First, it checks if the user can log in with the athenticationId, and if the athenticationId of the user stored as "writer" is the same, it deletes the user. However, if this user and "writer" are different, it checks if the user has admin privileges, and if so, proceeds to delete.  
 
 - curl -X DELETE http://localhost:8080/inquiry/inquiry7 -H "Content-type:application/json" -d '{" athenticationId ":" 6461b4e01b7d2d614f9ccccb "}'  

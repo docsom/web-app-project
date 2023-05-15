@@ -120,7 +120,7 @@ public class InquiryController {
 
 
     @RequestMapping(value = "/inquiry/{id}", method = RequestMethod.PUT)
-    public Inquiry editboard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException {
+    public Inquiry editBoard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Inquiry newboard = mapper.treeToValue(saveObj.get("inquiry"), Inquiry.class);
         String authId = saveObj.get("authenticationId").asText();
@@ -149,7 +149,7 @@ public class InquiryController {
     }//게시글 수정하기
 
     @RequestMapping(value = "/inquiry/change/{id}", method = RequestMethod.PUT)
-    public Inquiry Solved(@RequestBody ObjectNode saveObj, @PathVariable String id) {
+    public Inquiry solved(@RequestBody ObjectNode saveObj, @PathVariable String id) {
         String authId = saveObj.get("authenticationId").asText();
         User u = userRepository.findById(authId).orElse(null);
         if (u == null) {

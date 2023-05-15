@@ -139,7 +139,7 @@ class InquiryControllerTest {
 
         //when
         //then
-        assertThrows(WrongAuthenticationIdException.class, ()->inquiryController.editboard(requestBody,"inquiry8"));
+        assertThrows(WrongAuthenticationIdException.class, ()->inquiryController.editBoard(requestBody,"inquiry8"));
     }
 
 
@@ -163,7 +163,7 @@ class InquiryControllerTest {
 
         //when
         //then
-        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editboard(requestBody,"inquiry4"));
+        assertThrows(InsufficientpermissionException.class, ()->inquiryController.editBoard(requestBody,"inquiry4"));
     }
 
     @Test
@@ -186,7 +186,7 @@ class InquiryControllerTest {
         Query query1 = new Query();
 
         //when
-        inquiryController.editboard(requestBody, "inquiry3");
+        inquiryController.editBoard(requestBody, "inquiry3");
         //then
         query1.addCriteria(Criteria.where("id").is("inquirytest"));
         Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
@@ -219,7 +219,7 @@ class InquiryControllerTest {
 
         //when
 
-        inquiryController.editboard(requestBody, "inquirytest");
+        inquiryController.editBoard(requestBody, "inquirytest");
         //then
         Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
         assertTrue(!beforecontents.equals(newboard.getContents()) || !beforetitle.equals(newboard.getTitle()));
@@ -248,7 +248,7 @@ class InquiryControllerTest {
 
         //when
 
-        inquiryController.editboard(requestBody, "inquirytest2");
+        inquiryController.editBoard(requestBody, "inquirytest2");
         //then
         Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
         assertTrue(newboard!=null);
@@ -264,7 +264,7 @@ class InquiryControllerTest {
 
         //when
         //then
-        assertThrows(WrongAuthenticationIdException.class, ()->inquiryController.Solved(requestBody,"inquiry8"));
+        assertThrows(WrongAuthenticationIdException.class, ()->inquiryController.solved(requestBody,"inquiry8"));
     }
 
     @Test
@@ -281,7 +281,7 @@ class InquiryControllerTest {
 
         //when
         //then
-        assertThrows(InsufficientpermissionException.class, ()->inquiryController.Solved(requestBody,"inquiry8"));
+        assertThrows(InsufficientpermissionException.class, ()->inquiryController.solved(requestBody,"inquiry8"));
     }
 
     @Test
@@ -299,12 +299,12 @@ class InquiryControllerTest {
 
         //when
         //then
-        assertThrows(InvalidInquiryException.class, ()->inquiryController.Solved(requestBody,"inquiryno"));
+        assertThrows(InvalidInquiryException.class, ()->inquiryController.solved(requestBody,"inquiryno"));
     }
 
     @Test
     @DisplayName("Board is confirmed")
-    void Solved() throws JsonProcessingException {
+    void solved() throws JsonProcessingException {
         //given
         ObjectMapper om = new ObjectMapper();
         ObjectNode requestBody = om.createObjectNode();
@@ -321,7 +321,7 @@ class InquiryControllerTest {
 
         requestBody.put("authenticationId",authid);
         //when
-        inquiryController.Solved(requestBody, "inquiry3");
+        inquiryController.solved(requestBody, "inquiry3");
         //then
         Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
         assertTrue(before != newboard.isConfirmed());
