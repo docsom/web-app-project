@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory:"./23Spring_SoftwareEngineering_Group5/cse364-project"
+        working-directory : "./cse364-project"
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
