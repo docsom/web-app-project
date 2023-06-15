@@ -13,6 +13,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -26,15 +29,11 @@ class UserControllerTest {
     @DisplayName("Register new user with invalid student id")
     void registerNewUserWithInvalidStudentId() {
         //given
-        ObjectMapper om = new ObjectMapper();
-
-        ObjectNode user = om.createObjectNode();
-        user.put("id", "kicker5236");
-        user.put("password", "Kicker6325!");
-        user.put("email", "kicker5236@unist.ac.kr");
-        user.put("studentId", "20181016");
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("user", user);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "kicker5236");
+        requestBody.put("password", "Kicker6325!");
+        requestBody.put("email", "kicker5236@unist.ac.kr");
+        requestBody.put("studentId", "20181016");
         requestBody.put("idNum","1111111111111");
         //when
         //then
@@ -47,13 +46,11 @@ class UserControllerTest {
         //given
         ObjectMapper om = new ObjectMapper();
 
-        ObjectNode user = om.createObjectNode();
-        user.put("id", "aaa");
-        user.put("password", "Kicker6325!");
-        user.put("email", "kicker5236@unist.ac.kr");
-        user.put("studentId", "20181111");
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("user", user);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "aaa");
+        requestBody.put("password", "Kicker6325!");
+        requestBody.put("email", "kicker5236@unist.ac.kr");
+        requestBody.put("studentId", "20181111");
         requestBody.put("idNum","1111111111111");
         //when
         //then
@@ -64,15 +61,11 @@ class UserControllerTest {
     @DisplayName("Register new user with existing student id")
     void registerNewUserWithExistingStudentId() {
         //given
-        ObjectMapper om = new ObjectMapper();
-
-        ObjectNode user = om.createObjectNode();
-        user.put("id", "kicker5236");
-        user.put("password", "Kicker6325!");
-        user.put("email", "kicker5236@unist.ac.kr");
-        user.put("studentId", "20181234");
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("user", user);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "kicker5236");
+        requestBody.put("password", "Kicker6325!");
+        requestBody.put("email", "kicker5236@unist.ac.kr");
+        requestBody.put("studentId", "20181234");
         requestBody.put("idNum","1111111111111");
         //when
         //then
@@ -83,15 +76,12 @@ class UserControllerTest {
     @DisplayName("Register new user with unmatched id number")
     void registerNewUserWithUnmatchedIdNumber() {
         //given
-        ObjectMapper om = new ObjectMapper();
 
-        ObjectNode user = om.createObjectNode();
-        user.put("id", "kicker5236");
-        user.put("password", "Kicker6325!");
-        user.put("email", "kicker5236@unist.ac.kr");
-        user.put("studentId", "20181111");
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("user", user);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "kicker5236");
+        requestBody.put("password", "Kicker6325!");
+        requestBody.put("email", "kicker5236@unist.ac.kr");
+        requestBody.put("studentId", "20181111");
         requestBody.put("idNum","1111111111112");
         //when
         //then
@@ -101,16 +91,12 @@ class UserControllerTest {
     @Test
     @DisplayName("Register new user")
     void registerNewUser() throws JsonProcessingException {
-        //given
-        ObjectMapper om = new ObjectMapper();
 
-        ObjectNode user = om.createObjectNode();
-        user.put("id", "kym20181016");
-        user.put("password", "kym000131!");
-        user.put("email", "kym20181016@unist.ac.kr");
-        user.put("studentId", "20192222");
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("user", user);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "kym20181016");
+        requestBody.put("password", "kym000131!");
+        requestBody.put("email", "kym20181016@unist.ac.kr");
+        requestBody.put("studentId", "20192222");
         requestBody.put("idNum","2222222222222");
 
         Query query = new Query();
@@ -131,7 +117,7 @@ class UserControllerTest {
         //given
         ObjectMapper om = new ObjectMapper();
 
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("id", "ddd1234");
         requestBody.put("password","Ddd4321");
         //when
@@ -145,7 +131,7 @@ class UserControllerTest {
         //given
         ObjectMapper om = new ObjectMapper();
 
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("id", "aaa");
         requestBody.put("password","4321");
         //when
@@ -159,7 +145,7 @@ class UserControllerTest {
         //given
         ObjectMapper om = new ObjectMapper();
 
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("id", "aaa");
         requestBody.put("password","1234");
         //when

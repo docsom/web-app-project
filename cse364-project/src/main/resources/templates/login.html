@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Univice</title>
+    <style>
+        body {
+            background-color: #001C54;
+            font-family: 'Nunito';
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        p, label {
+            margin-block-start: 0;
+            margin-block-end: 0;
+            color: white;
+            cursor: pointer;
+        }
+
+        .login-box{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            width: auto;
+        }
+
+        .login-form{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        input {
+            border-radius: 0.25rem;
+            border-color: darkgray;
+            border-width: 2px;
+            padding: 0;
+            height: 1.5rem;
+            width: 99%;
+        }
+
+        button{
+            color: white;
+            font-weight: bold;
+            width: 100%;
+            height: 2rem;
+            background-color: #43C1C3;
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        label{
+            margin-bottom: 0.25rem;
+        }
+
+        #error-message {
+            display: flex;
+            color: red;
+            font-size: 0.75rem;
+            font-weight: bold;
+            width: 99%;
+            margin-top: 0.5rem;
+            visibility: hidden;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+  <div class="login-box">
+      <p style="font-weight: bold; font-size: 4rem; margin-left: 2rem; margin-right: 2rem">Univice</p>
+      <form class="login-form">
+          <div style="width: 100%">
+              <label for="id" style="display: block">ID</label>
+              <input type="text" name="id" id="id">
+          </div>
+          <div style="width: 100%">
+              <label for="password" style="display: block">Password</label>
+              <input type="password" name="password" id="password">
+          </div>
+      </form>
+      <div id="error-message">
+          error
+      </div>
+      <button type="button">
+          Login
+      </button>
+      <div style="display: flex; flex-direction: row-reverse; color: white; font-size: 0.75rem; font-weight: bold; width: 99%; margin-top: 0.5rem">
+          <p id="sign-up" onclick="location.href='/register'">sign up</p>
+      </div>
+  </div>
+</body>
+<script>
+    let hostURL = "http://localhost:8080/"
+    let inputID = document.getElementById("id");
+    let inputPW = document.getElementById("password");
+    let errorMsg = document.getElementById("error-message");
+    $("button").on("click", function (){
+        $.ajax({
+            url: hostURL + "signin",
+            data: {id: inputID.value, password: inputPW.value},
+            method: "GET"
+        })
+            .done(function(data){
+                console.log(data);
+                sessionStorage.setItem('sessionKey', data);
+                location.href='/';
+            })
+            .fail(function(xhr){
+                errorMsg.style.visibility = "visible";
+                if(xhr.hasOwnProperty("responseJSON")){
+                    errorMsg.innerText = xhr.responseJSON.message;
+                }
+            })
+    });
+</script>
+</html>

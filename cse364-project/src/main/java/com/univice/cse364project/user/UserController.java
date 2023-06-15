@@ -14,10 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/")
@@ -57,11 +62,10 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String LoginUser(@RequestBody ObjectNode saveObj) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        String id = saveObj.get("id").asText();
-        String password = saveObj.get("password").asText();
+    @RequestMapping(value = "/signin", method = RequestMethod.GET)
+    public String LoginUser(@RequestParam Map<String, Object> map) throws JsonProcessingException {
+        String id = (String) map.get("id");
+        String password = (String) map.get("password");
 
         Query query1 = new Query();
         query1.addCriteria(Criteria.where("id").is(id));
@@ -78,12 +82,20 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public User registerNewUser(@RequestBody ObjectNode saveObj) throws JsonProcessingException {
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public User registerNewUser(@RequestParam Map<String, Object> map) throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.treeToValue(saveObj.get("user"), User.class);
-        String idNum = saveObj.get("idNum").asText();
+        String id = (String)map.get("id");
+        String password = (String)map.get("password");
+        String studentId = (String)map.get("studentId");
+        String email = (String)map.get("email");
+        String idNum = (String)map.get("idNum");
+
+        User user = new User();
+        user.setId(id);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setStudentId(studentId);
 
         Query query1 = new Query();
         query1.addCriteria(Criteria.where("id").is(user.getId()));
@@ -119,32 +131,45 @@ public class UserController {
     }
 
     @ExceptionHandler(ExistingIdException.class)
-    public UserError ExistingIdExceptionHandler(ExistingIdException e){
-        return new UserError("Given id is already used.");
+    public ResponseEntity<String> ExistingIdExceptionHandler(ExistingIdException e){
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", e.getMessage());
+        return new ResponseEntity(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ExistingStudentIdException.class)
-    public UserError ExistingStudentIdExceptionHandler(ExistingStudentIdException e){
-        return new UserError("Given student id is already used.");
+    public ResponseEntity<String> ExistingStudentIdExceptionHandler(ExistingStudentIdException e){
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", e.getMessage());
+        return new ResponseEntity(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidStudentIdException.class)
-    public UserError InvalidStudentIdExceptionHandler(InvalidStudentIdException e){
-        return new UserError("Given student id is invalid.");
+    public ResponseEntity<String> InvalidStudentIdExceptionHandler(InvalidStudentIdException e){
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", e.getMessage());
+        return new ResponseEntity(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UnmatchedIdNumberException.class)
-    public UserError UnmatchedIdNumberExceptionHandler(UnmatchedIdNumberException e){
-        return new UserError("Given Id number is not matched.");
+    public ResponseEntity<String> UnmatchedIdNumberExceptionHandler(UnmatchedIdNumberException e){
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", e.getMessage());
+        return new ResponseEntity(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NoUserException.class)
-    public UserError NoUserExceptionHandler(NoUserException e){
-        return new UserError("There is no user using given id.");
+    public ResponseEntity<String> NoUserExceptionHandler(NoUserException e){
+
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", e.getMessage());
+        return new ResponseEntity(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(WrongPasswordException.class)
-    public UserError WrongPasswordExceptionHandler(WrongPasswordException e){
-        return new UserError("Password is wrong.");
+    public ResponseEntity<String> WrongPasswordExceptionHandler(WrongPasswordException e){
+        HashMap<String, String> result = new HashMap<>();
+        result.put("message", e.getMessage());
+        return new ResponseEntity(result, HttpStatus.NOT_FOUND);
     }
 }
