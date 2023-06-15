@@ -118,7 +118,9 @@ public class InquiryController {
 
     }//게시글 삭제
 
+/*
 
+ */
     @RequestMapping(value = "/inquiry/{id}", method = RequestMethod.PUT)
     public Inquiry editBoard(@RequestBody ObjectNode saveObj, @PathVariable String id) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
