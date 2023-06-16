@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Univice</title>
+  <style>
+    body {
+      font-family: 'Nunito';
+      display: flex;
+      height: 100vh;
+      margin: 0;
+    }
+    #side-bar {
+      width: 14rem;
+      background-color: #001C54;
+    }
+    #side-container{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 8px;
+      gap: 1.5rem;
+    }
+    p {
+      margin: 0;
+    }
+    .side-title{
+      color: white;
+      font-weight: bold;
+      font-size: 2.5rem;
+      margin-top: 0.75rem;
+    }
+    .side-current{
+      color: white;
+      font-weight: bold;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .side-contents{
+      color: gray;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    #main-content{
+      flex: 1;
+      margin: 8px 8px 8px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+    .main-title{
+      font-size: 2.5rem;
+      margin-top: 0.75rem;
+    }
+    .user-info{
+      width: 24rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .user-info-container{
+      display: flex;
+      justify-content: space-between;
+    }
+    button{
+      font-family: 'Nunito';
+      color: white;
+      font-weight: bold;
+      padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+      background-color: #43C1C3;
+      border: none;
+      border-radius: 0.5rem;
+    }
+    #button-container{
+      width: 32rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+<div id="side-bar">
+  <div id="side-container">
+    <p class="side-title">Univice</p>
+    <p id="current" class="side-contents">Current</p>
+    <p id="devices"  class="side-contents">Devices</p>
+    <p id="board" class="side-contents">Board</p>
+    <p id="my-page" class="side-current">My Page</p>
+  </div>
+</div>
+<div id="main-content">
+  <p class="main-title">Current Using Device</p>
+  <div class="user-info">
+    <div class="user-info-container">
+      <p>ID:</p>
+      <p id="id"></p>
+    </div>
+    <div class="user-info-container">
+      <p>Student ID:</p>
+      <p id="student-id"></p>
+    </div>
+    <div class="user-info-container">
+      <p>Current Using Device:</p>
+      <p id="using-device"></p>
+    </div>
+  </div>
+  <div id="button-container">
+    <button id="logout">
+      Logout
+    </button>
+  </div>
+</div>
+</body>
+<script>
+  let hostURL = "http://localhost:8080/";
+  let userKey = sessionStorage.getItem("sessionKey");
+  let currentUser = undefined;
+
+  let idEl = document.getElementById("id");
+  let studentIdEl = document.getElementById('student-id');
+  let currentUsingDeviceEl = document.getElementById("using-device");
+  let logoutBtnEl = document.getElementById("logout");
+  let setCurrentUser = () => {
+    $.ajax({
+      url: hostURL + "user",
+      data: {sessionKey : userKey},
+      method: "GET",
+      dataType: "json"
+    })
+            .done(function(data){
+              currentUser = data;
+              idEl.innerText = currentUser.id;
+              studentIdEl.innerText = currentUser.studentId;
+              currentUsingDeviceEl.innerText = currentUser.currentUsingDevice.name;
+            })
+            .fail(function(xhr){
+              location.href = '/login';
+            })
+  }
+
+  $(document).ready(function (){
+    if(userKey !== null){
+      setCurrentUser();
+    } else {
+      location.href = '/login';
+    }
+  })
+
+  $(logoutBtnEl).on("click", () => {
+    sessionStorage.removeItem("sessionKey");
+    location.href = '/login';
+  })
+</script>
+</html>

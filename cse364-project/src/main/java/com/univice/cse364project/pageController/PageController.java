@@ -14,4 +14,9 @@ public class PageController {
     public String registerPage(){
         return "register";
     }
+
+    @GetMapping("/mypage")
+    public String myPage(){
+        return "my-page";
+    }
 }
