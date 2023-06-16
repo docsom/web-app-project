@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 @SpringBootTest
@@ -71,8 +72,7 @@ public class DeviceControllerTest {
     @DisplayName("Rent with wrong authentication id")
     void rentWithWrongAuthenticationId() {
         //given
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", "");
         //when
         //then
@@ -86,8 +86,7 @@ public class DeviceControllerTest {
         query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         Device d = mongoTemplate.findOne(query, Device.class);
@@ -106,8 +105,7 @@ public class DeviceControllerTest {
         query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         //then
@@ -121,8 +119,7 @@ public class DeviceControllerTest {
         query.addCriteria(Criteria.where("currentUsingDevice").is(null));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         Query query2 = new Query();
@@ -139,8 +136,7 @@ public class DeviceControllerTest {
     @DisplayName("Return with wrong authentication id")
     void returnWithWrongAuthenticationId() {
         //given
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", "");
         //when
         //then
@@ -154,8 +150,7 @@ public class DeviceControllerTest {
         query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         //then
@@ -169,8 +164,7 @@ public class DeviceControllerTest {
         query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         Device d = mongoTemplate.findOne(query, Device.class);
@@ -189,8 +183,7 @@ public class DeviceControllerTest {
         query.addCriteria(Criteria.where("id").is("test"));
         User u = mongoTemplate.findOne(query, User.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         Device d = mongoTemplate.findOne(query, Device.class);
@@ -214,8 +207,7 @@ public class DeviceControllerTest {
         User u = mongoTemplate.findOne(query, User.class);
         Device d = mongoTemplate.findOne(query, Device.class);
         String authId = u.getAuthenticationId();
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("authenticationId", authId);
         //when
         deviceController.rentDevice(requestBody, "test");

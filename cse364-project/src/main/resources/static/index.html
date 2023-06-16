@@ -4,6 +4,79 @@
     <meta charset="UTF-8">
     <title>Univice</title>
     <style>
+        body {
+            font-family: 'Nunito';
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        #side-bar {
+            width: 14rem;
+            background-color: #001C54;
+        }
+        #side-container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 8px;
+            gap: 1.5rem;
+        }
+        p {
+            margin: 0;
+        }
+        .side-title{
+            color: white;
+            font-weight: bold;
+            font-size: 2.5rem;
+            margin-top: 0.75rem;
+        }
+        .side-current{
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .side-contents{
+            color: gray;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        #main-content{
+            flex: 1;
+            margin: 8px 8px 8px 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        .main-title{
+            font-size: 2.5rem;
+            margin-top: 0.75rem;
+        }
+        .device-info{
+            width: 14rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .date-info{
+            display: flex;
+            justify-content: space-between;
+        }
+        button{
+            font-family: 'Nunito';
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+            background-color: #43C1C3;
+            border: none;
+            border-radius: 0.5rem;
+        }
+        #button-container{
+            width: 32rem;
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,12 +84,99 @@
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 </head>
 <body>
-This is index page.
+    <div id="side-bar">
+        <div id="side-container">
+            <p class="side-title">Univice</p>
+            <p class="side-current">Current</p>
+            <p class="side-contents">Devices</p>
+            <p class="side-contents">Board</p>
+            <p class="side-contents">My Page</p>
+        </div>
+    </div>
+    <div id="main-content">
+        <p class="main-title">Current Using Device</p>
+        <div class="device-info">
+            <p id="device-name"></p>
+            <div class="date-info">
+                <p>Start Date:</p>
+                <p id="start-date"></p>
+            </div>
+            <div class="date-info">
+                <p>End Date:</p>
+                <p id="end-date"></p>
+            </div>
+        </div>
+        <div id="button-container">
+            <button id="current-return">
+                Return
+            </button>
+        </div>
+    </div>
 </body>
 <script>
+    let hostURL = "http://localhost:8080/";
+    let userKey = sessionStorage.getItem("sessionKey");
+    let currentUser = undefined;
+    let currentDevice = undefined;
+
+    let deviceInfoEl = document.getElementsByClassName("device-info")[0];
+    let deviceNameEl = document.getElementById("device-name");
+    let startDateEl = document.getElementById("start-date");
+    let endDateEl = document.getElementById("end-date");
+    let returnBtnEl = document.getElementById("current-return");
+
+    let showDeviceInfo = () => {
+        if(currentDevice === null){
+            deviceInfoEl.style.visibility = "hidden";
+            returnBtnEl.style.visibility = "hidden";
+        } else {
+            deviceNameEl.innerText = currentDevice.name;
+            startDateEl.innerText = currentDevice.startDate[0] + "." + currentDevice.startDate[1] + "." +currentDevice.startDate[2];
+            endDateEl.innerText = currentDevice.endDate[0] + "." + currentDevice.endDate[1] + "." +currentDevice.endDate[2];
+            returnBtnEl.style.visibility = "block";
+        }
+    }
+    let setCurrentUser = () => {
+        $.ajax({
+            url: hostURL + "user",
+            data: {sessionKey : userKey},
+            method: "GET",
+            dataType: "json"
+        })
+            .done(function(data){
+                currentUser = data;
+                if(currentUser.hasOwnProperty("currentUsingDevice")){
+                    currentDevice = currentUser.currentUsingDevice;
+                }
+                showDeviceInfo();
+            })
+            .fail(function(xhr){
+                location.href = '/login';
+            })
+    }
+
     $(document).ready(function (){
-        if(sessionStorage.getItem("sessionKey") === null){
-            location.href='/login';
+        if(userKey !== null){
+            setCurrentUser();
+        } else {
+            location.href = '/login';
+        }
+    })
+
+    $(returnBtnEl).on("click", () => {
+        if(currentDevice !== undefined){
+            $.ajax({
+                url: hostURL + "device/return/" + currentDevice.id,
+                data: {sessionKey : userKey},
+                method: "PUT",
+                dataType: "json"
+            })
+                .done(function(){
+                    setCurrentUser();
+                })
+                .fail(function(xhr){
+                    location.href = '/';
+                })
         }
     })
 </script>

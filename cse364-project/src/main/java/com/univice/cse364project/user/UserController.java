@@ -82,6 +82,21 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public ResponseEntity<User> getUser(@RequestParam Map<String, Object> map) throws JsonProcessingException {
+        String sessionKey = (String) map.get("sessionKey");
+
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("authenticationId").is(sessionKey));
+        User existingUser = mongoTemplate.findOne(query1, User.class);
+
+        if(existingUser == null){
+            throw new NoUserException();
+        } else {
+            return new ResponseEntity(existingUser, HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public User registerNewUser(@RequestParam Map<String, Object> map) throws JsonProcessingException {
 

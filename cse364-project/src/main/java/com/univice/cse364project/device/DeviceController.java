@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -72,8 +73,8 @@ public class DeviceController {
         return target;
     }
     @PutMapping(value="/device/rent/{id}")
-    public Device rentDevice(@RequestBody ObjectNode saveObj, @PathVariable String id) {
-        String authId = saveObj.get("authenticationId").asText();
+    public Device rentDevice(@RequestParam Map<String, Object> map, @PathVariable String id) {
+        String authId = (String) map.get("sessionKey");
         User u = userRepository.findById(authId).orElse(null);
         if(u==null) {
             // 로그인 여부 확인
@@ -101,8 +102,8 @@ public class DeviceController {
         return device;
     }
     @PutMapping(value = "/device/return/{id}")
-    public Device returnDevice(@RequestBody ObjectNode saveObj, @PathVariable String id) {
-        String authId = saveObj.get("authenticationId").asText();
+    public Device returnDevice(@RequestParam Map<String, Object> map, @PathVariable String id) {
+        String authId = (String) map.get("sessionKey");
         User u = userRepository.findById(authId).orElse(null);
         if(u==null) {
             // 로그인 여부 확인
