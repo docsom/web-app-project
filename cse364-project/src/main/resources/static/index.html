@@ -125,6 +125,8 @@
     let endDateEl = document.getElementById("end-date");
     let returnBtnEl = document.getElementById("current-return");
 
+    let myPageEl = document.getElementById("my-page");
+
     let showDeviceInfo = () => {
         if(currentDevice === null){
             deviceInfoEl.style.visibility = "hidden";
@@ -178,6 +180,10 @@
                     location.href = '/';
                 })
         }
+    })
+
+    $(myPageEl).on("click", () => {
+        location.href = '/mypage';
     })
 </script>
 </html>

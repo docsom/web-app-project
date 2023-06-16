@@ -125,6 +125,7 @@
   let studentIdEl = document.getElementById('student-id');
   let currentUsingDeviceEl = document.getElementById("using-device");
   let logoutBtnEl = document.getElementById("logout");
+  let currentPageEl = document.getElementById("current");
   let setCurrentUser = () => {
     $.ajax({
       url: hostURL + "user",
@@ -154,6 +155,10 @@
   $(logoutBtnEl).on("click", () => {
     sessionStorage.removeItem("sessionKey");
     location.href = '/login';
+  })
+
+  $(currentPageEl).on("click", () => {
+    location.href = '/';
   })
 </script>
 </html>
