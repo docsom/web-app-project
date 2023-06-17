@@ -129,7 +129,7 @@
   let setCurrentUser = () => {
     $.ajax({
       url: hostURL + "user",
-      data: {sessionKey : userKey},
+      data: {authenticationId : userKey},
       method: "GET",
       dataType: "json"
     })

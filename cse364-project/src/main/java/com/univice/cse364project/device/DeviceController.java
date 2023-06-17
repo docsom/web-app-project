@@ -74,7 +74,7 @@ public class DeviceController {
     }
     @PutMapping(value="/device/rent/{id}")
     public Device rentDevice(@RequestParam Map<String, Object> map, @PathVariable String id) {
-        String authId = (String) map.get("sessionKey");
+        String authId = (String) map.get("authenticationId");
         User u = userRepository.findById(authId).orElse(null);
         if(u==null) {
             // 로그인 여부 확인
@@ -103,7 +103,7 @@ public class DeviceController {
     }
     @PutMapping(value = "/device/return/{id}")
     public Device returnDevice(@RequestParam Map<String, Object> map, @PathVariable String id) {
-        String authId = (String) map.get("sessionKey");
+        String authId = (String) map.get("authenticationId");
         User u = userRepository.findById(authId).orElse(null);
         if(u==null) {
             // 로그인 여부 확인

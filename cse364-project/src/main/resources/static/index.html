@@ -141,7 +141,7 @@
     let setCurrentUser = () => {
         $.ajax({
             url: hostURL + "user",
-            data: {sessionKey : userKey},
+            data: {authenticationId : userKey},
             method: "GET",
             dataType: "json"
         })
@@ -169,7 +169,7 @@
         if(currentDevice !== undefined){
             $.ajax({
                 url: hostURL + "device/return/" + currentDevice.id,
-                data: {sessionKey : userKey},
+                data: {authenticationId : userKey},
                 method: "PUT",
                 dataType: "json"
             })
