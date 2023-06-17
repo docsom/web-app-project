@@ -94,7 +94,7 @@
   </div>
 </div>
 <div id="main-content">
-  <p class="main-title">Current Using Device</p>
+  <p class="main-title">My Page</p>
   <div class="user-info">
     <div class="user-info-container">
       <p>ID:</p>
@@ -126,6 +126,7 @@
   let currentUsingDeviceEl = document.getElementById("using-device");
   let logoutBtnEl = document.getElementById("logout");
   let currentPageEl = document.getElementById("current");
+  let devicePageEl = document.getElementById("devices");
   let setCurrentUser = () => {
     $.ajax({
       url: hostURL + "user",
@@ -159,6 +160,10 @@
 
   $(currentPageEl).on("click", () => {
     location.href = '/';
+  })
+
+  $(devicePageEl).on("click", () => {
+    location.href = '/devicelist';
   })
 </script>
 </html>

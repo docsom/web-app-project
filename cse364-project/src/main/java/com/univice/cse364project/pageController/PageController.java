@@ -19,4 +19,9 @@ public class PageController {
     public String myPage(){
         return "my-page";
     }
+
+    @GetMapping("/devicelist")
+    public String devicesPage(){
+        return "device";
+    }
 }

@@ -86,7 +86,7 @@
 <body>
     <div id="side-bar">
         <div id="side-container">
-            <p class="side-title">Un</p>
+            <p class="side-title">Univice</p>
             <p class="side-current">Current</p>
             <p id="devices"  class="side-contents">Devices</p>
             <p id="board" class="side-contents">Board</p>
@@ -148,7 +148,6 @@
         })
             .done(function(data){
                 currentUser = data;
-                console.log(data);
                 if(currentUser.hasOwnProperty("currentUsingDevice")){
                     currentDevice = currentUser.currentUsingDevice;
                 }
@@ -184,9 +183,9 @@
         }
     })
 
-    // $(myPageEl).on("click", () => {
-    //     location.href = '/mypage';
-    // })
+    $(myPageEl).on("click", () => {
+        location.href = '/mypage';
+    })
 
     $(devicePageEl).on("click", () => {
         location.href = '/devicelist';

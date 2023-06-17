@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Univice</title>
+    <style>
+        body {
+            font-family: 'Nunito';
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        #side-bar {
+            width: 14rem;
+            background-color: #001C54;
+        }
+        #side-container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 8px;
+            gap: 1.5rem;
+        }
+        p {
+            margin: 0;
+        }
+        .side-title{
+            color: white;
+            font-weight: bold;
+            font-size: 2.5rem;
+            margin-top: 0.75rem;
+        }
+        .side-current{
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .side-contents{
+            color: gray;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        #main-content{
+            flex: 1;
+            margin: 8px 8px 8px 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        #main-content-container{
+            display: flex;
+            justify-content: space-between;
+            width: 40rem;
+            align-items: center;
+        }
+        .main-title{
+            font-size: 2.5rem;
+            margin-top: 0.75rem;
+        }
+        #tabs{
+            margin-top: 0.75rem;
+            font-size: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+        button{
+            font-family: 'Nunito';
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+            background-color: #43C1C3;
+            border: none;
+            border-radius: 0.5rem;
+        }
+        #card-container{
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .card{
+            width: 40rem;
+            height: auto;
+            border: 2px solid gray;
+            border-radius: 8px;
+        }
+        .card-content{
+            margin: 12px 16px 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .name-info{
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .device-name{
+            font-size: 1.5rem;
+        }
+        .available{
+            color: chartreuse;
+            font-weight: bold;
+        }
+        .occupied{
+            color: red;
+            font-weight: bold;
+        }
+        .device-info{
+            width: 14rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .date-info{
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-container{
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .focus-tab{
+            font-weight: bold;
+            color: #001C54;
+            cursor: pointer;
+        }
+        .out-tab{
+            color: darkgray;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+    <div id="side-bar">
+        <div id="side-container">
+            <p class="side-title">Univice</p>
+            <p id="current" class="side-contents">Current</p>
+            <p id="devices"  class="side-current">Devices</p>
+            <p id="board" class="side-contents">Board</p>
+            <p id="my-page" class="side-contents">My Page</p>
+        </div>
+    </div>
+    <div id="main-content">
+        <div id="main-content-container">
+            <p class="main-title">Devices</p>
+            <div id="tabs">
+                <p id="total-device" class="focus-tab">Total</p>
+                <p id="tablet-device" class="out-tab">Tablet</p>
+                <p id="monitor-device" class="out-tab">Monitor</p>
+            </div>
+        </div>
+        <div id="card-container">
+
+        </div>
+    </div>
+</body>
+<script>
+    let hostURL = "http://localhost:8080/";
+    let userKey = sessionStorage.getItem("sessionKey");
+
+    let totalTabEl = document.getElementById("total-device");
+    let tabletTabEl = document.getElementById("tablet-device");
+    let monitorTabEl = document.getElementById("monitor-device");
+    let currentPageEl = document.getElementById("current");
+    let myPageEl = document.getElementById("my-page");
+    let cardContainerEl = document.getElementById("card-container");
+
+    let dataFormatter = (dateList) => {
+        return dateList[0] + "." + dateList[1] + "." + dateList[2];
+    }
+
+    let buttonMaker = (idList) => {
+        for(let availableId of idList){
+            let rentBtnEl = document.getElementById(availableId);
+            $(rentBtnEl).on("click", () => {
+                $.ajax({
+                    url: hostURL + "device/rent/" + availableId,
+                    data: {authenticationId : userKey},
+                    method: "PUT",
+                    dataType: "json"
+                })
+                    .done(function(json){
+                        location.reload();
+                    })
+                    .fail(function(xhr){
+                        location.reload();
+                    })
+            })
+        }
+    }
+
+    let cardGenerator = (currentDeviceList) => {
+        let cardHTML = "";
+        let availableIdList = [];
+        for (let device of currentDeviceList) {
+            if(device.currentUser === null){
+                availableIdList.push(device.id);
+                cardHTML += "<div class=\"card\">\n" +
+                    "                <div class=\"card-content\">\n" +
+                    "                    <div class=\"name-info\">\n" +
+                    "                        <p class=\"device-name\">"+ device.name +"</p>\n" +
+                    "                        <p class=\"available\">Available</p>\n" +
+                    "                    </div>\n" +
+                    "                    <div class=\"device-info\">\n" +
+                    "                        <div class=\"date-info\">\n" +
+                    "                            <p>Start Date:</p>\n" +
+                    "                            <p class=\"start-date\"></p>\n" +
+                    "                        </div>\n" +
+                    "                        <div class=\"date-info\">\n" +
+                    "                            <p>End Date:</p>\n" +
+                    "                            <p class=\"end-date\"></p>\n" +
+                    "                        </div>\n" +
+                    "                    </div>\n" +
+                    "                    <div class=\"button-container\">\n" +
+                    "                        <button class=\"current-rent\"" + " id=\"" + device.id + "\">\n" +
+                    "                            Rent\n" +
+                    "                        </button>\n" +
+                    "                    </div>\n" +
+                    "                </div>\n" +
+                    "            </div>"
+            } else {
+                cardHTML += "<div class=\"card\">\n" +
+                    "                <div class=\"card-content\">\n" +
+                    "                    <div class=\"name-info\">\n" +
+                    "                        <p class=\"device-name\">"+ device.name +"</p>\n" +
+                    "                        <p class=\"occupied\">Occupied</p>\n" +
+                    "                    </div>\n" +
+                    "                    <div class=\"device-info\">\n" +
+                    "                        <div class=\"date-info\">\n" +
+                    "                            <p>Start Date:</p>\n" +
+                    "                            <p class=\"start-date\">"+ dataFormatter(device.startDate) +"</p>\n" +
+                    "                        </div>\n" +
+                    "                        <div class=\"date-info\">\n" +
+                    "                            <p>End Date:</p>\n" +
+                    "                            <p class=\"end-date\">" + dataFormatter(device.endDate) + "</p>\n" +
+                    "                        </div>\n" +
+                    "                    </div>\n" +
+                    "                    <div class=\"button-container\">\n" +
+                    "                        <button class=\"current-rent\" style=\"visibility: hidden\">\n" +
+                    "                            Rent\n" +
+                    "                        </button>\n" +
+                    "                    </div>\n" +
+                    "                </div>\n" +
+                    "            </div>"
+            }
+        }
+        cardContainerEl.innerHTML = cardHTML;
+        buttonMaker(availableIdList);
+    }
+    let getAllDevices = () => {
+        $.ajax({
+            url: hostURL + "devices",
+            method: "GET",
+            dataType: "json"
+        })
+            .done(function(data){
+                cardGenerator(data);
+            })
+            .fail(function(xhr){
+                console.log(xhr)
+            })
+    }
+
+    let getTabletDevices = () => {
+        $.ajax({
+            url: hostURL + "devices/tablet",
+            method: "GET",
+            dataType: "json"
+        })
+            .done(function(data){
+                cardGenerator(data);
+            })
+            .fail(function(xhr){
+                console.log(xhr)
+            })
+    }
+
+    let getMonitorDevices = () => {
+        $.ajax({
+            url: hostURL + "devices/monitor",
+            method: "GET",
+            dataType: "json"
+        })
+            .done(function(data){
+                cardGenerator(data);
+            })
+            .fail(function(xhr){
+                console.log(xhr)
+            })
+    }
+
+    $(document).ready(function (){
+        getAllDevices();
+        if(userKey !== null){
+            setCurrentUser();
+        } else {
+            location.href = '/login';
+        }
+    })
+
+    $(currentPageEl).on("click", () => {
+        location.href = '/';
+    })
+
+    $(myPageEl).on("click", () => {
+        location.href = '/mypage';
+    })
+
+    $(totalTabEl).on("click", () => {
+        totalTabEl.className = "focus-tab";
+        tabletTabEl.className = "out-tab";
+        monitorTabEl.className = "out-tab";
+        getAllDevices();
+    })
+
+    $(tabletTabEl).on("click", () => {
+        totalTabEl.className = "out-tab";
+        tabletTabEl.className = "focus-tab";
+        monitorTabEl.className = "out-tab";
+        getTabletDevices();
+    })
+
+    $(monitorTabEl).on("click", () => {
+        totalTabEl.className = "out-tab";
+        tabletTabEl.className = "out-tab";
+        monitorTabEl.className = "focus-tab";
+        getMonitorDevices();
+    })
+</script>
+</html>
