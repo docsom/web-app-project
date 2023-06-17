@@ -21,6 +21,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      - name: Create mongoDB container      
+        run: sudo docker run -d -p 27017:27017 mongo:latest
+
       - name: build mvn
         run: mvn -B package --file pom.xml
 
