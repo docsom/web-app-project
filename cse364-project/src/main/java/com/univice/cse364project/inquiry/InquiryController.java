@@ -33,6 +33,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,16 +84,22 @@ public class InquiryController {
     }//작성자 게시글 찾기
 
     @RequestMapping(value = "/inquiry/write", method = RequestMethod.POST)
-    public Inquiry insertBoard(@RequestBody ObjectNode saveObj) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Inquiry inquiry = mapper.treeToValue(saveObj.get("inquiry"), Inquiry.class);
-        String authId = saveObj.get("authenticationId").asText();
+    public Inquiry insertBoard(@RequestParam Map<String, Object> map) throws JsonProcessingException {
+
+        String authId = (String) map.get("authenticationId");
+
+        Inquiry inquiry = new Inquiry();
+        inquiry.setTitle((String) map.get("title"));
+        inquiry.setContents((String) map.get("contents"));
+        inquiry.setConfirmed(false);
+
         User u = userRepository.findById(authId).orElse(null);
         if (u == null) {
             // 로그인 여부 확인
             throw new WrongAuthenticationIdException();
         }
         inquiry.setWriter(u.getId());
+        System.out.println(inquiry);
         return InquiryRepository.save(inquiry);
     }//게시글 작성
 

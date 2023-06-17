@@ -53,13 +53,28 @@
             font-size: 2.5rem;
             margin-top: 0.75rem;
         }
-        button{
+        #main-content-container{
+            display: flex;
+            justify-content: space-between;
+            width: 40rem;
+            align-items: center;
+        }
+        .default-button{
             font-family: 'Nunito';
             color: white;
             font-weight: bold;
             padding: 0.5rem 2.5rem 0.5rem 2.5rem;
             background-color: #43C1C3;
             border: none;
+            border-radius: 0.5rem;
+        }
+        .sub-button{
+            font-family: 'Nunito';
+            color: #43C1C3;
+            font-weight: bold;
+            padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+            background-color: white;
+            border: darkgray solid 1px;
             border-radius: 0.5rem;
         }
         #card-container{
@@ -109,6 +124,30 @@
             color: red;
             font-weight: bold;
         }
+        #new-inquiry{
+            display: none;
+            position: fixed;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .new-background{
+            background-color: white;
+            width: 48rem;
+            height: 28rem;
+            opacity: 1.0;
+        }
+        .new-inquiry-container{
+            display:flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 1rem;
+            height:90%
+        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -126,8 +165,26 @@
         </div>
     </div>
     <div id="main-content">
-        <p class="main-title">Board</p>
+        <div id="main-content-container">
+            <p class="main-title">Devices</p>
+            <button id="write-inquiry" class="default-button" style="margin-top: 0.75rem;">New Inquiry</button>
+        </div>
         <div id="card-container">
+        </div>
+    </div>
+    <div id="new-inquiry">
+        <div class="new-background">
+            <div class="new-inquiry-container">
+                <p style="font-size: 2rem;">New Inquiry</p>
+                <p>Title</p>
+                <input id="new-inquiry-title" style="width: 100%; height:1.5rem;">
+                <p>Contents</p>
+                <textarea id="new-inquiry-contents" style="width: 100%; flex: 1;"></textarea>
+                <div style="width: 100%; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                    <button id="new-cancel" class="sub-button">cancel</button>
+                    <button id="new-complete" class="default-button">complete</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -139,6 +196,13 @@
     let devicePageEl = document.getElementById("devices");
     let myPageEl = document.getElementById("my-page");
     let cardContainerEl = document.getElementById("card-container");
+
+    let newInquiryEl = document.getElementById("new-inquiry")
+    let newInquiryBtn = document.getElementById("write-inquiry");
+    let newInquiryTitleEl = document.getElementById("new-inquiry-title");
+    let newInquiryContentsEl = document.getElementById("new-inquiry-contents");
+    let newInquiryCancelBtn = document.getElementById("new-cancel");
+    let newInquiryCompleteBtn = document.getElementById("new-complete");
 
     let cardGenerator = (currentInquiryList) => {
         let cardHTML = "";
@@ -207,6 +271,34 @@
                 location.href = '/login';
             })
     }
+
+    $(newInquiryBtn).on("click",()=>{
+        newInquiryEl.style.display = "flex";
+    })
+
+    $(newInquiryCancelBtn).on("click",()=>{
+        newInquiryEl.style.display = "none";
+    })
+
+    $(newInquiryCompleteBtn).on("click", ()=>{
+        $.ajax({
+            url: hostURL + "inquiry/write",
+            method: "POST",
+            data: {
+                authenticationId : userKey,
+                title : newInquiryTitleEl.value,
+                contents : newInquiryContentsEl.value
+            },
+            dataType: "json"
+        })
+            .done(function(data){
+                console.log(data)
+                location.reload();
+            })
+            .fail(function(xhr){
+                console.log(xhr);
+            })
+    })
 
     $(document).ready(function (){
         getAllInquiries();

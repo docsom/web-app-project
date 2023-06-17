@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.univice.cse364project.user.User;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,35 +32,29 @@ class InquiryControllerTest {
     @BeforeAll
     void beforeTest() throws IOException, CsvException {
         //given
-        ObjectMapper om = new ObjectMapper();
-
-        ObjectNode inquiry = om.createObjectNode();
-        inquiry.put("id", "inquirytest");
-        inquiry.put("title", "testtitle");
-        inquiry.put("contents", " testboard");
-        inquiry.put("confirmed", false);
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "inquirytest");
+        requestBody.put("title", "testtitle");
+        requestBody.put("contents", " testboard");
+        requestBody.put("confirmed", false);
         Query query = new Query();
         query.addCriteria(Criteria.where("isAdmin").is(false));
         User u = mongoTemplate.findOne(query, User.class);
         String authid = u.getAuthenticationId();
-        requestBody.put("inquiry",inquiry);
         requestBody.put("authenticationId",authid);
 
         //when
         inquiryController.insertBoard(requestBody);
 
-        ObjectNode inquiry2 = om.createObjectNode();
-        inquiry2.put("id", "inquirytest");
-        inquiry2.put("title", "testtitle");
-        inquiry2.put("contents", " testboard");
-        inquiry2.put("confirmed", false);
-        ObjectNode requestBody2 = om.createObjectNode();
+        HashMap<String, Object> requestBody2 = new HashMap<>();
+        requestBody2.put("id", "inquirytest");
+        requestBody2.put("title", "testtitle");
+        requestBody2.put("contents", " testboard");
+        requestBody2.put("confirmed", false);
         Query query2 = new Query();
         query2.addCriteria(Criteria.where("studentId").is("20201234"));
         User u2 = mongoTemplate.findOne(query2, User.class);
         String authid2 = u2.getAuthenticationId();
-        requestBody2.put("inquiry",inquiry2);
         requestBody2.put("authenticationId",authid2);
 
         //when
@@ -70,14 +65,11 @@ class InquiryControllerTest {
     @DisplayName("Write new board with sufficient ")
     void writeboardwithInSufficientId() {
         //given
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode inquiry = om.createObjectNode();
-        inquiry.put("id", "inquiry7");
-        inquiry.put("title", "chantest1!");
-        inquiry.put("contents", "invalide board");
-        inquiry.put("confirmed", false);
-        ObjectNode requestBody = om.createObjectNode();
-        requestBody.put("inquiry", inquiry);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "inquiry7");
+        requestBody.put("title", "chantest1!");
+        requestBody.put("contents", "invalide board");
+        requestBody.put("confirmed", false);
         requestBody.put("authenticationId","111");
         //when
         //then
@@ -89,32 +81,25 @@ class InquiryControllerTest {
     @DisplayName("Write new board")
     void insertBoard() throws JsonProcessingException {
         //given
-        ObjectMapper om = new ObjectMapper();
-
-        ObjectNode inquiry = om.createObjectNode();
-        inquiry.put("id", "inquiry8");
-        inquiry.put("title", "chantest8!");
-        inquiry.put("contents", " board");
-        inquiry.put("confirmed", false);
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("title", "chantest8!");
+        requestBody.put("contents", " board");
+        requestBody.put("confirmed", false);
         Query query = new Query();
         query.addCriteria(Criteria.where("isAdmin").is(false));
         User u = mongoTemplate.findOne(query, User.class);
         String authid = u.getAuthenticationId();
 
-
-
-        requestBody.put("inquiry",inquiry);
-
         requestBody.put("authenticationId",authid);
 
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("id").is("inquiry8"));
+        query1.addCriteria(Criteria.where("title").is("chantest8!"));
 
         //when
         inquiryController.insertBoard(requestBody);
         //then
         Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
+        System.out.println(newboard);
         assertTrue(newboard != null && newboard instanceof Inquiry);
 
     }
@@ -173,25 +158,25 @@ class InquiryControllerTest {
         ObjectMapper om = new ObjectMapper();
         ObjectNode inquiry = om.createObjectNode();
         ObjectNode requestBody = om.createObjectNode();
+
         Query query = new Query();
         query.addCriteria(Criteria.where("isAdmin").is(true));
         User u = mongoTemplate.findOne(query, User.class);
         String authid = u.getAuthenticationId();
+
         inquiry.put("id", "inquiry77");
         inquiry.put("title", "chantest5!");
         inquiry.put("contents", "can make board");
         inquiry.put("confirmed", false);
+
         requestBody.put("inquiry", inquiry);
         requestBody.put("authenticationId",authid);
-        Query query1 = new Query();
 
         //when
-        inquiryController.editBoard(requestBody, "inquiry3");
+        Inquiry result = inquiryController.editBoard(requestBody, "inquiry3");
         //then
-        query1.addCriteria(Criteria.where("id").is("inquirytest"));
-        Inquiry newboard = mongoTemplate.findOne(query1, Inquiry.class);
 
-        assertTrue(newboard!=null);
+        assertTrue(result != null);
     }
 
     @Test
@@ -417,25 +402,26 @@ class InquiryControllerTest {
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is("chantest8!"));
         Inquiry test = mongoTemplate.findOne(query, Inquiry.class);
-        mongoTemplate.remove(test);
+        if(test != null){
+            mongoTemplate.remove(test);
+        }
 
         Query query2 = new Query();
         query2.addCriteria(Criteria.where("title").is("chantestischange3"));
         Inquiry test2 = mongoTemplate.findOne(query2, Inquiry.class);
-        mongoTemplate.remove(test2);
+        if(test2 != null){
+            mongoTemplate.remove(test2);
+        }
 
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode inquiry = om.createObjectNode();
-        inquiry.put("id", "inquiry5");
-        inquiry.put("title", "test5");
-        inquiry.put("contents", " content5");
-        inquiry.put("confirmed", false);
-        ObjectNode requestBody = om.createObjectNode();
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", "inquiry5");
+        requestBody.put("title", "test5");
+        requestBody.put("contents", " content5");
+        requestBody.put("confirmed", false);
         Query query1 = new Query();
         query1.addCriteria(Criteria.where("isAdmin").is(false));
         User u = mongoTemplate.findOne(query1, User.class);
         String authid = u.getAuthenticationId();
-        requestBody.put("inquiry",inquiry);
         requestBody.put("authenticationId",authid);
 
         inquiryController.insertBoard(requestBody);
