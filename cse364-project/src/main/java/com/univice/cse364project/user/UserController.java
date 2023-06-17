@@ -84,10 +84,10 @@ public class UserController {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public ResponseEntity<User> getUser(@RequestParam Map<String, Object> map) throws JsonProcessingException {
-        String sessionKey = (String) map.get("sessionKey");
+        String authenticationId = (String) map.get("authenticationId");
 
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("authenticationId").is(sessionKey));
+        query1.addCriteria(Criteria.where("authenticationId").is(authenticationId));
         User existingUser = mongoTemplate.findOne(query1, User.class);
 
         if(existingUser == null){
