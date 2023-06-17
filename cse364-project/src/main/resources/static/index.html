@@ -127,6 +127,7 @@
 
     let myPageEl = document.getElementById("my-page");
     let devicePageEl = document.getElementById("devices");
+    let boardPageEl = document.getElementById("board");
 
     let showDeviceInfo = () => {
         if(currentDevice === null){
@@ -189,6 +190,10 @@
 
     $(devicePageEl).on("click", () => {
         location.href = '/devicelist';
+    })
+
+    $(boardPageEl).on("click", () => {
+        location.href = '/board';
     })
 </script>
 </html>

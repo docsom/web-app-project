@@ -24,4 +24,9 @@ public class PageController {
     public String devicesPage(){
         return "device";
     }
+
+    @GetMapping("/board")
+    public String boardPage(){
+        return "board";
+    }
 }

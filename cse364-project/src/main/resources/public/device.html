@@ -173,8 +173,11 @@
     let totalTabEl = document.getElementById("total-device");
     let tabletTabEl = document.getElementById("tablet-device");
     let monitorTabEl = document.getElementById("monitor-device");
+
     let currentPageEl = document.getElementById("current");
     let myPageEl = document.getElementById("my-page");
+    let boardPageEl = document.getElementById("board");
+
     let cardContainerEl = document.getElementById("card-container");
 
     let dataFormatter = (dateList) => {
@@ -301,6 +304,18 @@
             })
     }
 
+    let setCurrentUser = () => {
+        $.ajax({
+            url: hostURL + "user",
+            data: {authenticationId : userKey},
+            method: "GET",
+            dataType: "json"
+        })
+            .fail(function(xhr){
+                location.href = '/login';
+            })
+    }
+
     $(document).ready(function (){
         getAllDevices();
         if(userKey !== null){
@@ -312,6 +327,10 @@
 
     $(currentPageEl).on("click", () => {
         location.href = '/';
+    })
+
+    $(boardPageEl).on("click", () => {
+        location.href = '/board';
     })
 
     $(myPageEl).on("click", () => {

@@ -125,8 +125,11 @@
   let studentIdEl = document.getElementById('student-id');
   let currentUsingDeviceEl = document.getElementById("using-device");
   let logoutBtnEl = document.getElementById("logout");
+
   let currentPageEl = document.getElementById("current");
   let devicePageEl = document.getElementById("devices");
+  let boardPageEl = document.getElementById("board");
+
   let setCurrentUser = () => {
     $.ajax({
       url: hostURL + "user",
@@ -164,6 +167,10 @@
 
   $(devicePageEl).on("click", () => {
     location.href = '/devicelist';
+  })
+
+  $(boardPageEl).on("click", () => {
+    location.href = '/board';
   })
 </script>
 </html>
