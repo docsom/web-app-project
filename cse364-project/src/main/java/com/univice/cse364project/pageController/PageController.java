@@ -19,4 +19,14 @@ public class PageController {
     public String myPage(){
         return "my-page";
     }
+
+    @GetMapping("/devicelist")
+    public String devicesPage(){
+        return "device";
+    }
+
+    @GetMapping("/board")
+    public String boardPage(){
+        return "board";
+    }
 }
