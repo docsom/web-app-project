@@ -11,7 +11,7 @@
 	<groupId>com.univice</groupId>
 	<artifactId>cse364-project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
+	<packaging>war</packaging>
 
 	<name>cse364-project</name>
 	<description>Demo project for Spring Boot</description>
