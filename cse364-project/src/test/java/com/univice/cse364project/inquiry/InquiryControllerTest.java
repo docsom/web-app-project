@@ -388,10 +388,11 @@ class InquiryControllerTest {
         requestBody1.put("authenticationId",authid1);
 
         Query query2 = new Query();
-        query2.addCriteria(Criteria.where("id").is("inquiry5"));
+        query2.addCriteria(Criteria.where("title").is("test5"));
+        Inquiry result = mongoTemplate.findOne(query2, Inquiry.class);
 
         //when
-        inquiryController.deleteBoard(requestBody1, "inquiry5");
+        inquiryController.deleteBoard(requestBody1, result.getId());
         //then
         Inquiry deleted = mongoTemplate.findOne(query2, Inquiry.class);
         assertTrue(deleted == null);
