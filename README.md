@@ -71,7 +71,7 @@ If not, you will see a blank page.
 If the end date has passed today, your rented device will be returned automatically.
 To return your rented device before the end date, click the "return" button on the application's homepage.
 
-## 2. Device Rental Status Board
+## 3. Device Rental Status Board
 
 You will be directed to this page by clicking "Devices" button in the sidebar.
 You can check all devices and the status of them on this page.
@@ -96,7 +96,7 @@ To rent a device you want, click the "Rent" button of the device.
 The rental period starts on the day of renting a device and ends on 3 months later.
 You can rent only one device. If you have a rented device and click the "Rent" button, nothing will happen.
 
-## 3. Inquiry Board for using the service better
+## 4. Inquiry Board for using the service better
 
 You will be directed to this page by clicking "Board" button in the sidebar.
 If you encounter any issues or have questions while using our service, you can make an inquiry on this page.
@@ -115,7 +115,7 @@ Follow these steps to write an inquiry:
 3. Fill in the required information including title and contents.
 4. Click "complete" button to complete your inquiry or "cancel" button to cancel to write it.
 
-## 4. My page
+## 5. My page
 
 You will be directed to this page by clicking "My page" button in the sidebar.
 
