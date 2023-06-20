@@ -11,7 +11,7 @@ This guide will provide you with all necessary information to use our applicatio
 
 ### Running the Application on the host machine
 
-You first download the Dockerfile, cse364-project-0.0.1-SNAPSHOT.war and run.sh in the environment folder.  
+You first download the Dockerfile and run.sh in the environment folder.  
 Run the following commands:  
 **$ docker build -t image_name /path/to/Dockerfile**  
 **$ docker run -p 8080:8080 -it image_name**
